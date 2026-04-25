@@ -18,3 +18,7 @@ summary::-webkit-details-marker {
   z-index: -1;
   background-position-x: center;
 }
+
+body {
+  font-family: 'Playfair Display', serif;
+}

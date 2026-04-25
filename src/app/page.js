@@ -1,7 +1,5 @@
 "use client";
 
-import "./app.css";
-import "@appwrite.io/pink-icons";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { client } from "@/lib/appwrite";
 import { AppwriteException } from "appwrite";
