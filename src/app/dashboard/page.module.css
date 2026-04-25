@@ -106,7 +106,7 @@
 
 .invited {
   margin: 0;
-  font-size: 42px;
+  font-size: 20px;
   letter-spacing: 0.02em;
   font-family: "Playfair Display", serif;
 }
@@ -114,7 +114,7 @@
 .newTitle {
   margin: 10px 0 0;
   font-family: "Playfair Display", serif;
-  font-weight: 600;
+  font-weight: 400;
   font-size: clamp(68px, 8vw, 95px);
   letter-spacing: 0.04em;
   line-height: 0.95;
@@ -122,7 +122,7 @@
 
 .chapter {
   margin: -6px 0 14px;
-  font-family: "Allura", cursive;
+  font-family: "Playfair Display", cursive;
   font-size: clamp(96px, 11vw, 128px);
   line-height: 0.9;
   color: #2a6194;

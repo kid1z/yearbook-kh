@@ -97,7 +97,7 @@ export default function GraduationLanding() {
           </p>
         </div>
 
-        <section className={styles.infoCard}>
+        {/* <section className={styles.infoCard}>
           <article>
             <p className={styles.cardLabel}>THỜI GIAN</p>
             <h3>09:00 AM</h3>
@@ -119,9 +119,9 @@ export default function GraduationLanding() {
               <span />
             </div>
           </article>
-        </section>
+        </section> */}
 
-        <section className={styles.letterCard}>
+        {/* <section className={styles.letterCard}>
           <p className={styles.dear}>Dear you,</p>
           <p>
             Cảm ơn vì đã luôn là một phần thanh xuân của mình.
@@ -153,25 +153,8 @@ export default function GraduationLanding() {
 
         <section className={styles.countdown}>
           <p className={styles.countdownTitle}>ĐẾM NGƯỢC ĐẾN NGÀY ĐẶC BIỆT</p>
-          <div className={styles.countGrid}>
-            <article>
-              <h4>{String(timeLeft.days).padStart(2, "0")}</h4>
-              <p>NGÀY</p>
-            </article>
-            <article>
-              <h4>{String(timeLeft.hours).padStart(2, "0")}</h4>
-              <p>GIỜ</p>
-            </article>
-            <article>
-              <h4>{String(timeLeft.minutes).padStart(2, "0")}</h4>
-              <p>PHÚT</p>
-            </article>
-            <article>
-              <h4>{String(timeLeft.seconds).padStart(2, "0")}</h4>
-              <p>GIÂY</p>
-            </article>
-          </div>
-        </section>
+          <div className={styles.countGrid}></div>
+        </section> */}
       </section>
     </main>
   );
