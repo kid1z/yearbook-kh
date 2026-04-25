@@ -32,69 +32,73 @@ export default function GraduationLanding() {
   return (
     <main className={styles.pageWrap}>
       <section className={styles.poster}>
-        <div className={styles.paperTexture} />
-
-        <div className={styles.backgroundLayer}>
+        <div className={styles.topLogo}>
           <Image
-            src="/school.jpg"
-            alt="UEL Campus"
-            fill
-            sizes="(max-width: 900px) 100vw, 768px"
-            className={styles.schoolImage}
+            src="/logo_uel.png"
+            alt="UEL Logo"
+            width={120}
+            height={120}
+            className={styles.uelLogo}
+          />
+        </div>
+        <div className={styles.hero}>
+          <div className={styles.backgroundLayer}>
+            <Image
+              src="/school.jpg"
+              alt="UEL Campus"
+              fill
+              sizes="(max-width: 900px) 100vw, 768px"
+              className={styles.schoolImage}
+              priority
+            />
+          </div>
+
+          <div className={styles.heroText}>
+            <p className={styles.invited}>You&apos;re Invited to</p>
+            <h1 className={styles.newTitle}>Graduation</h1>
+            <p className={styles.chapter}>Ceremony</p>
+
+            <div className={styles.gradLine}>
+              <span>SẮP TỐT NGHIỆP</span>
+            </div>
+
+            <h2 className={styles.name}>Đặng Phan Khánh Huyền</h2>
+            <p className={styles.faculty}>Khoa Quản Trị Kinh Doanh</p>
+            <p className={styles.school}>
+              TRƯỜNG ĐẠI HỌC KINH TẾ - LUẬT
+              <br />
+              ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH
+            </p>
+          </div>
+
+          <Image
+            src="/avatar.png"
+            alt="Graduation portrait"
+            width={430}
+            height={780}
+            className={styles.avatar}
             priority
           />
         </div>
 
-        <div className={styles.topLogo}>UEL</div>
+        {/* <div className={styles.paperTexture} /> */}
 
-        <Image
-          src="/avatar.png"
-          alt="Graduation portrait"
-          width={430}
-          height={780}
-          className={styles.avatar}
-          priority
-        />
+        <div className={styles.flower}>
+          <Image
+            src="/flower.png"
+            alt="Flower decoration"
+            width={340}
+            height={240}
+            className={styles.flowerLeft}
+          />
 
-        <Image
-          src="/flower.png"
-          alt="Flower decoration"
-          width={340}
-          height={240}
-          className={styles.flowerLeft}
-        />
-
-        <Image
-          src="/flower.png"
-          alt="Flower decoration"
-          width={310}
-          height={220}
-          className={styles.flowerRight}
-        />
-
-        <div className={styles.heroText}>
-          <p className={styles.invited}>You&apos;re Invited to</p>
-          <h1 className={styles.newTitle}>A NEW</h1>
-          <p className={styles.chapter}>Chapter</p>
-          <p className={styles.quote}>
-            “Thanh xuân như một chuyến tàu,
-            <br />
-            dừng lại một ga để trưởng thành hơn,
-            <br />
-            rồi lại tiếp tục hành trình của riêng mình.”
-          </p>
-
-          <div className={styles.gradLine}>
-            <span>SẮP TỐT NGHIỆP</span>
-          </div>
-
-          <h2 className={styles.name}>NGUYỄN THẢO LINH</h2>
-          <p className={styles.faculty}>KHOA KINH TẾ ĐỐI NGOẠI</p>
-          <p className={styles.school}>
-            TRƯỜNG ĐẠI HỌC KINH TẾ - LUẬT
-            <br />
-            ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH
-          </p>
+          <Image
+            src="/flower.png"
+            alt="Flower decoration"
+            width={310}
+            height={220}
+            className={styles.flowerRight}
+          />
         </div>
 
         {/* <section className={styles.infoCard}>
