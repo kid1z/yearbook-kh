@@ -28,12 +28,12 @@
   display: grid;
   place-items: center;
   background:
-    radial-gradient(
+    /* radial-gradient(
       circle at 50% 42%,
       rgba(255, 224, 122, 0.62) 0%,
       rgba(255, 224, 122, 0.16) 38%,
       transparent 56%
-    ),
+    ), */
     radial-gradient(
       circle at 50% 56%,
       rgba(255, 199, 89, 0.2) 0%,
@@ -48,7 +48,26 @@
   backdrop-filter: blur(2px);
 }
 
-.introGlow {
+.introBorderSvg {
+  position: absolute;
+  inset: 10px;
+  width: calc(100vw - 20px);
+  height: calc(100vh - 20px);
+  pointer-events: none;
+  filter: drop-shadow(0 0 10px rgba(255, 217, 120, 0.28));
+}
+
+.introBorderRect {
+  fill: none;
+  stroke: rgba(255, 230, 154, 0.95);
+  stroke-width: 0.35;
+  stroke-linecap: round;
+  stroke-dasharray: 16 84;
+  stroke-dashoffset: 0;
+  animation: introBorderRun 4.5s linear infinite;
+}
+
+/* .introGlow {
   position: absolute;
   width: min(90vw, 520px);
   height: min(90vw, 520px);
@@ -60,30 +79,29 @@
     rgba(255, 181, 72, 0.24) 58%,
     transparent 80%
   );
-}
+} */
 
-.introSubline {
-  margin: 0;
+.introTextStack {
+  margin-top: 14px;
   position: relative;
   z-index: 2;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: rgba(255, 245, 210, 0.96);
-  font-size: clamp(12px, 1.8vw, 16px);
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .introTitle {
-  margin: 12px 0 0;
+  margin: 0;
   position: relative;
   z-index: 2;
   font-family: var(--font-qellia), serif;
   font-weight: 500;
-  font-size: clamp(58px, 10vw, 110px);
-  line-height: 0.9;
-  letter-spacing: 0.02em;
+  font-size: clamp(34px, 6.6vw, 74px);
+  line-height: 0.95;
+  letter-spacing: 0.05em;
   text-align: center;
-  color: #ffe8a1;
+  color: #e6b728;
   background: linear-gradient(180deg, #fff7d2 0%, #ffd88e 52%, #d9972b 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -93,13 +111,45 @@
     0 18px 38px rgba(0, 0, 0, 0.38);
 }
 
+.introPrimaryLine {
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: clamp(26px, 4vw, 48px);
+}
+
+.introDateLine {
+  letter-spacing: 0.3em;
+  font-size: clamp(20px, 3.2vw, 30px);
+}
+
+.introNameLine {
+  font-family: var(--font-high-spirited), cursive;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-size: clamp(34px, 5.3vw, 66px);
+  line-height: 0.85;
+}
+
+.introChar {
+  display: inline-block;
+  transform-origin: center bottom;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes introBorderRun {
+  0% {
+    stroke-dashoffset: 100;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
 .blossomPetal {
   position: absolute;
   border-radius: 999px;
   overflow: hidden;
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
   transform-origin: center;
 }
 
@@ -146,7 +196,7 @@
 .schoolImage {
   object-fit: cover;
   object-position: 68% center;
-  opacity: 0.42;
+  opacity: 0.8;
   filter: saturate(0.8) contrast(0.9);
 }
 
@@ -160,12 +210,12 @@
       rgba(243, 247, 253, 0.96) 0%,
       rgba(243, 247, 253, 0.8) 40%,
       rgba(243, 247, 253, 0) 64%,
-      rgba(243, 247, 253, 0.7) 100%
+      rgba(243, 247, 253, 0) 100%
     ),
     radial-gradient(
       circle at 76% 44%,
       rgba(255, 255, 255, 0) 0%,
-      rgba(246, 248, 252, 0.48) 72%
+      rgba(246, 248, 252, 0) 72%
     );
 }
 
@@ -192,8 +242,8 @@
   position: absolute;
   right: 86px;
   bottom: 0;
-  z-index: 2;
-  width: clamp(260px, 44vw, 500px);
+  z-index: 6;
+  width: clamp(260px, 40vw, 370px);
   height: auto;
   filter: drop-shadow(0 20px 26px rgba(19, 40, 71, 0.28));
 }
@@ -413,51 +463,92 @@
 }
 
 .letterCard {
-  position: absolute;
-  left: 72px;
-  bottom: 146px;
-  z-index: 7;
-  width: 415px;
-  padding: 34px 36px 28px;
+  position: relative;
+  left: 84px;
+  z-index: 6;
+  width: min(66vw, 760px);
+  min-height: 248px;
+  padding: 38px 44px 34px;
   border-radius: 8px;
+  overflow: hidden;
   background: rgba(251, 252, 255, 0.92);
-  box-shadow: 0 16px 34px rgba(18, 42, 74, 0.18);
-  transform: rotate(-1.2deg);
+  box-shadow: 0 18px 34px rgba(18, 42, 74, 0.18);
+  transform: rotate(-1deg);
+}
+
+.paperTextureImg {
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.26;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .dear {
   margin: 0;
-  color: #214871;
-  font-size: 56px;
+  position: relative;
+  z-index: 1;
+  color: #5b77a4;
+  font-size: 72px;
   line-height: 0.9;
-  font-family: var(--font-qellia), "Allura", cursive;
+  font-family: var(--font-high-spirited), "Allura", cursive;
 }
 
-.letterCard p {
-  margin: 12px 0 0;
+.letterBody {
+  margin: 18px 0 0;
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
   font-size: 17px;
   color: #3f607f;
-  line-height: 1.62;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
 }
 
 .sign {
-  margin-top: 16px;
+  margin-top: 18px;
+  position: relative;
+  z-index: 1;
   text-align: right;
-  color: #2b6298;
-  font-size: 62px;
+  color: #5f88bb;
+  font-size: 74px;
   line-height: 0.95;
-  font-family: var(--font-qellia), "Allura", cursive;
+  font-family: var(--font-high-spirited), cursive;
 }
 
 .envelope {
   position: absolute;
-  right: -48px;
-  bottom: 22px;
+  right: -145px;
+  bottom: 100px;
   z-index: 6;
-  width: 366px;
+  width: 540px;
   height: auto;
-  transform: rotate(7deg);
-  filter: drop-shadow(0 16px 28px rgba(12, 33, 62, 0.24));
+  transform: rotate(317deg);
+  filter: drop-shadow(0 16px 28px rgba(12, 33, 62, 0.9));
+}
+
+.whiteFlower {
+  position: absolute;
+  right: 122px;
+  bottom: 285px;
+  z-index: 9;
+  width: 192px;
+  height: auto;
+  transform: rotate(335deg);
+  opacity: 0.95;
+  filter: drop-shadow(4px 2px 1px rgb(24, 24, 24));
+}
+
+.charm {
+  position: absolute;
+  right: 85px;
+  bottom: 315px;
+  z-index: 8;
+  width: 70px;
+  height: auto;
+  transform: rotate(335deg);
+  opacity: 0.95;
+  filter: drop-shadow(4px 0 1px rgb(24, 24, 24));
 }
 
 .polaroid {
@@ -480,9 +571,10 @@
 }
 
 .countdown {
-  position: absolute;
-  left: 56px;
-  bottom: 34px;
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   z-index: 9;
   color: #274669;
 }
@@ -492,6 +584,7 @@
   font-size: 18px;
   letter-spacing: 0.06em;
   font-weight: 700;
+  font-family: "Playfair Display", serif;
 }
 
 .countGrid {
@@ -609,17 +702,16 @@
   }
 
   .avatar {
-    width: 248px;
-    top: 196px;
-    right: 6px;
+    width: min(88vw, 420px);
+    top: auto;
+    bottom: 0;
+    right: -14px;
   }
 
   .infoCard {
-    left: 12px;
-    right: 12px;
     bottom: 20px;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 0;
     padding: 18px 16px 20px;
   }
 
@@ -652,30 +744,40 @@
   }
 
   .letterCard {
-    left: 16px;
-    right: 18px;
+    left: 12px;
+    right: 12px;
     width: auto;
-    bottom: 184px;
-    padding: 18px 18px 16px;
+    /* bottom: 220px; */
+    min-height: 190px;
+    padding: 18px 20px 18px;
     transform: none;
   }
 
   .dear {
-    font-size: 42px;
-  }
-
-  .letterCard p {
-    font-size: 13px;
-  }
-
-  .sign {
     font-size: 44px;
   }
 
+  .letterBody {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .sign {
+    margin-top: 8px;
+    font-size: 46px;
+  }
+
   .envelope {
-    width: 220px;
-    right: -54px;
-    bottom: 18px;
+    width: 262px;
+    right: -72px;
+    bottom: 58px;
+  }
+
+  .whiteFlower {
+    width: 112px;
+    right: -6px;
+    bottom: 190px;
   }
 
   .polaroid {

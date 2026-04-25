@@ -8,6 +8,12 @@ const qellia = localFont({
   display: "swap",
 });
 
+const highSpirited = localFont({
+  src: "./fonts/1KHighSpirited.otf",
+  variable: "--font-high-spirited",
+  display: "swap",
+});
+
 export const metadata = {
   title: "Appwrite + Next.js",
   description: "Appwrite starter for Next.js",
@@ -32,7 +38,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/svg+xml" href="/appwrite.svg" />
       </head>
       <body
-        className={`${qellia.variable} bg-[#FAFAFB] font-[Inter] text-sm text-[#56565C]`}
+        className={`${qellia.variable} ${highSpirited.variable} bg-[#FAFAFB] font-[Inter] text-sm text-[#56565C]`}
       >
         {children}
       </body>
