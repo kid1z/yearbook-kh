@@ -1,11 +1,16 @@
 import "./app.css";
 import "@appwrite.io/pink-icons";
 import localFont from "next/font/local";
+import { Geist } from "next/font/google";
 
 const qellia = localFont({
   src: "./fonts/Fz_Qellia_Fix.ttf",
   variable: "--font-qellia",
   display: "swap",
+});
+
+const geist = Geist({
+  subsets: ["latin"],
 });
 
 const highSpirited = localFont({
@@ -38,7 +43,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/svg+xml" href="/appwrite.svg" />
       </head>
       <body
-        className={`${qellia.variable} ${highSpirited.variable} bg-[#FAFAFB] font-[Inter] text-sm text-[#56565C]`}
+        className={`${qellia.variable} ${highSpirited.variable} ${geist.variable} bg-[#FAFAFB] font-[Inter] text-sm text-[#56565C]`}
       >
         {children}
       </body>

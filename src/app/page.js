@@ -8,6 +8,7 @@ import SplitText from "gsap/SplitText";
 import gsap from "gsap";
 import InfoCard from "./info-card";
 import styles from "./page.module.css";
+import Chat from "./chat";
 
 gsap.registerPlugin(useGSAP, SplitText);
 
@@ -45,6 +46,19 @@ const blossomItems = Array.from({ length: 50 }, (_, index) => {
   };
 });
 
+const avatarPalette = [
+  "#FE2C55",
+  "#25F4EE",
+  "#FFD166",
+  "#7B68EE",
+  "#FF6B6B",
+  "#4ECDC4",
+  "#FF8A5C",
+  "#A78BFA",
+  "#F472B6",
+  "#38BDF8",
+];
+
 export default function GraduationLanding() {
   const targetDate = new Date("2026-05-11T00:00:00");
   const pageRef = useRef(null);
@@ -57,6 +71,13 @@ export default function GraduationLanding() {
     seconds: 0,
   });
   const [showIntro, setShowIntro] = useState(true);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatError, setChatError] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [formName, setFormName] = useState("");
+  const [formMessage, setFormMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const inputRef = useRef(null);
 
   function getTimeLeft() {
     const now = new Date();
@@ -88,12 +109,64 @@ export default function GraduationLanding() {
     return () => window.clearTimeout(hideIntroTimer);
   }, []);
 
+  async function refreshChat() {
+    try {
+      const response = await fetch("/api/chat", { cache: "no-store" });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to load chat feed");
+      }
+
+      setChatMessages(data.documents || []);
+      setChatError("");
+    } catch (error) {
+      console.error("Error fetching chat messages:", error);
+      setChatError("Cannot load chat feed right now.");
+    }
+  }
+
+  useEffect(() => {
+    refreshChat();
+  }, []);
+
+  async function handleSend() {
+    const trimmed = formMessage.trim();
+    if (!trimmed || sending) return;
+
+    setSending(true);
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formName.trim() || "Anonymous",
+          message: trimmed,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to send message");
+      }
+
+      setFormName("");
+      setFormMessage("");
+      setDrawerOpen(false);
+      await refreshChat();
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setSending(false);
+    }
+  }
+
   useGSAP(
     () => {
       const select = gsap.utils.selector(pageRef);
       const poster = select(`.${styles.poster}`);
       const schoolImage = select(`.${styles.schoolImage}`);
-      const topLogo = select(`.${styles.topLogo}`);
       const heroTextChildren = select(`.${styles.heroText} > *`);
       const avatar = select(`.${styles.avatar}`);
       const infoCard = select(`.${styles.infoCard}`);
@@ -186,15 +259,6 @@ export default function GraduationLanding() {
           },
         )
         .from(
-          topLogo,
-          {
-            y: -42,
-            opacity: 0,
-            duration: 0.85,
-          },
-          "-=1.05",
-        )
-        .from(
           heroTextChildren,
           {
             y: 34,
@@ -246,6 +310,14 @@ export default function GraduationLanding() {
         y: 14,
         rotation: -24,
         duration: 6.2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      gsap.to(`.${styles.messageFeed}`, {
+        y: -6,
+        duration: 3.8,
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
@@ -369,16 +441,44 @@ export default function GraduationLanding() {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {!showIntro && (
+          <motion.nav
+            className={styles.navbar}
+            initial={{ y: -80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <div className={styles.topLogo}>
+              <Image
+                src="/logo_uel.png"
+                alt="UEL Logo"
+                width={120}
+                height={120}
+                className={styles.uelLogo}
+              />
+            </div>
+
+            <input
+              ref={inputRef}
+              type="text"
+              className={styles.inputField}
+              placeholder="Leave your message..."
+              readOnly
+              onClick={() => setDrawerOpen(true)}
+            />
+          </motion.nav>
+        )}
+      </AnimatePresence>
+
+      <Chat
+        showIntro={showIntro}
+        chatMessages={chatMessages}
+        chatError={chatError}
+        avatarPalette={avatarPalette}
+      />
+
       <section className={styles.poster}>
-        <div className={styles.topLogo}>
-          <Image
-            src="/logo_uel.png"
-            alt="UEL Logo"
-            width={120}
-            height={120}
-            className={styles.uelLogo}
-          />
-        </div>
         <div className={styles.hero}>
           <div className={styles.backgroundLayer}>
             <Image
@@ -515,6 +615,56 @@ export default function GraduationLanding() {
           </div>
         </section>
       </section>
+      <AnimatePresence>
+        {drawerOpen && (
+          <motion.div
+            className={styles.drawerBackdrop}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => setDrawerOpen(false)}
+          >
+            <motion.div
+              className={styles.drawer}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.drawerHandle} />
+              <h3 className={styles.drawerTitle}>Leave a message</h3>
+
+              <input
+                type="text"
+                className={styles.drawerInput}
+                placeholder="Your name"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                maxLength={60}
+              />
+
+              <textarea
+                className={styles.drawerTextarea}
+                placeholder="Write your message..."
+                value={formMessage}
+                onChange={(e) => setFormMessage(e.target.value)}
+                maxLength={500}
+                rows={4}
+              />
+
+              <button
+                className={styles.drawerSend}
+                onClick={handleSend}
+                disabled={!formMessage.trim() || sending}
+              >
+                {sending ? "Sending..." : "Send message"}
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }
