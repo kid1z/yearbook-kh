@@ -1,309 +1,520 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { client } from "@/lib/appwrite";
-import { AppwriteException } from "appwrite";
-import NextjsLogo from "../static/nextjs-icon.svg";
-import AppwriteLogo from "../static/appwrite-icon.svg";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "motion/react";
+import { useGSAP } from "@gsap/react";
+import SplitText from "gsap/SplitText";
+import gsap from "gsap";
+import InfoCard from "./info-card";
+import styles from "./page.module.css";
 
-export default function Home() {
-  const [detailHeight, setDetailHeight] = useState(55);
-  const [logs, setLogs] = useState([]);
-  const [status, setStatus] = useState("idle");
-  const [showLogs, setShowLogs] = useState(false);
+gsap.registerPlugin(useGSAP, SplitText);
 
-  const detailsRef = useRef(null);
+const INTRO_DURATION_MS = 4500;
+const REVEAL_TIMELINE_DELAY_S = 4.1;
 
-  const updateHeight = useCallback(() => {
-    if (detailsRef.current) {
-      setDetailHeight(detailsRef.current.clientHeight);
-    }
-  }, [logs, showLogs]);
+const introLines = [
+  {
+    id: 1,
+    text: "Graduation Ceremony",
+    className: styles.introPrimaryLine,
+  },
+  { id: 2, text: "11/05/2026", className: styles.introDateLine },
+  {
+    id: 3,
+    text: "Dang Phan Khanh Huyen",
+    className: styles.introNameLine,
+  },
+];
 
-  useEffect(() => {
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
-  }, [updateHeight]);
+const blossomItems = Array.from({ length: 50 }, (_, index) => {
+  const cycle = index % 10;
+  const row = Math.floor(index / 10);
 
-  useEffect(() => {
-    if (!detailsRef.current) return;
-    detailsRef.current.addEventListener("toggle", updateHeight);
+  return {
+    id: index + 1,
+    left: (cycle * 10 + row * 1.7) % 100,
+    top: -12 - row * 5,
+    size: 10 + (index % 5) * 4,
+    duration: 16 + (index % 7) * 1.3,
+    sway: 10 + (index % 6) * 3,
+    delay: cycle * 0.26 + row * 0.12,
+    rotate: -20 + (index % 8) * 5,
+    opacity: 0.44 + (index % 5) * 0.08,
+  };
+});
 
-    return () => {
-      if (!detailsRef.current) return;
-      detailsRef.current.removeEventListener("toggle", updateHeight);
-    };
-  }, []);
+export default function GraduationLanding() {
+  const targetDate = new Date("2026-05-11T00:00:00");
+  const pageRef = useRef(null);
+  const introLineRefs = useRef([]);
 
-  async function sendPing() {
-    if (status === "loading") return;
-    setStatus("loading");
-    try {
-      const result = await client.ping();
-      const log = {
-        date: new Date(),
-        method: "GET",
-        path: "/v1/ping",
-        status: 200,
-        response: JSON.stringify(result),
-      };
-      setLogs((prevLogs) => [log, ...prevLogs]);
-      setStatus("success");
-    } catch (err) {
-      const log = {
-        date: new Date(),
-        method: "GET",
-        path: "/v1/ping",
-        status: err instanceof AppwriteException ? err.code : 500,
-        response:
-          err instanceof AppwriteException
-            ? err.message
-            : "Something went wrong",
-      };
-      setLogs((prevLogs) => [log, ...prevLogs]);
-      setStatus("error");
-    }
-    setShowLogs(true);
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+  const [showIntro, setShowIntro] = useState(true);
+
+  function getTimeLeft() {
+    const now = new Date();
+    const diff = Math.max(targetDate.getTime() - now.getTime(), 0);
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    return { days, hours, minutes, seconds };
   }
 
+  useEffect(() => {
+    setTimeLeft(getTimeLeft());
+
+    const interval = setInterval(() => {
+      setTimeLeft(getTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const hideIntroTimer = window.setTimeout(() => {
+      setShowIntro(false);
+    }, INTRO_DURATION_MS);
+
+    return () => window.clearTimeout(hideIntroTimer);
+  }, []);
+
+  useGSAP(
+    () => {
+      const select = gsap.utils.selector(pageRef);
+      const poster = select(`.${styles.poster}`);
+      const schoolImage = select(`.${styles.schoolImage}`);
+      const topLogo = select(`.${styles.topLogo}`);
+      const heroTextChildren = select(`.${styles.heroText} > *`);
+      const avatar = select(`.${styles.avatar}`);
+      const infoCard = select(`.${styles.infoCard}`);
+      const flowers = select(`.${styles.flowerLeft}, .${styles.flowerRight}`);
+      const introLineElements = introLineRefs.current.filter(Boolean);
+
+      const introSplits = introLineElements.map((element) =>
+        SplitText.create(element, {
+          type: "chars",
+          charsClass: styles.introChar,
+        }),
+      );
+
+      const introTimeline = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        delay: 0.12,
+      });
+
+      introTimeline
+        .set(introLineElements, {
+          autoAlpha: 1,
+        })
+        .from(introSplits[0]?.chars ?? [], {
+          opacity: 0,
+          y: 34,
+          rotateX: -82,
+          filter: "blur(12px)",
+          stagger: 0.038,
+          duration: 1.05,
+        })
+        .from(
+          introSplits[1]?.chars ?? [],
+          {
+            opacity: 0,
+            y: 24,
+            scale: 0.88,
+            filter: "blur(10px)",
+            stagger: 0.06,
+            duration: 1.02,
+          },
+          "-=0.62",
+        )
+        .from(
+          introSplits[2]?.chars ?? [],
+          {
+            opacity: 0,
+            y: 22,
+            filter: "blur(10px)",
+            stagger: 0.03,
+            duration: 1.28,
+          },
+          "-=0.5",
+        )
+        .to(
+          introSplits.flatMap((split) => split.chars),
+          {
+            y: -12,
+            opacity: 0,
+            filter: "blur(12px)",
+            stagger: 0.01,
+            duration: 0.95,
+          },
+          3.45,
+        );
+
+      const revealTimeline = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        delay: REVEAL_TIMELINE_DELAY_S,
+      });
+
+      revealTimeline
+        .set(poster, {
+          autoAlpha: 1,
+        })
+        .fromTo(
+          schoolImage,
+          {
+            scale: 1.14,
+            y: 28,
+            opacity: 0.38,
+            filter: "blur(7px)",
+          },
+          {
+            scale: 1,
+            y: 0,
+            opacity: 0.8,
+            filter: "blur(0px)",
+            duration: 0.5,
+            ease: "power2.out",
+          },
+        )
+        .from(
+          topLogo,
+          {
+            y: -42,
+            opacity: 0,
+            duration: 0.85,
+          },
+          "-=1.05",
+        )
+        .from(
+          heroTextChildren,
+          {
+            y: 34,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.08,
+          },
+          "-=0.35",
+        )
+        .from(
+          avatar,
+          {
+            x: 90,
+            opacity: 0,
+            duration: 1.05,
+          },
+          "-=0.85",
+        )
+        .from(
+          infoCard,
+          {
+            y: 86,
+            opacity: 0,
+            duration: 0.9,
+          },
+          "-=0.7",
+        )
+        .from(
+          flowers,
+          {
+            opacity: 0,
+            scale: 0.85,
+            duration: 0.85,
+            stagger: 0.1,
+          },
+          "-=0.95",
+        );
+
+      gsap.to(`.${styles.flowerLeft}`, {
+        y: -16,
+        rotation: 21,
+        duration: 5.4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      gsap.to(`.${styles.flowerRight}`, {
+        y: 14,
+        rotation: -24,
+        duration: 6.2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      return () => {
+        introSplits.forEach((split) => split.revert());
+      };
+    },
+    { scope: pageRef },
+  );
+
   return (
-    <main
-      className="checker-background flex flex-col items-center p-5"
-      style={{ marginBottom: `${detailHeight}px` }}
-    >
-      <div className="mt-25 flex w-full max-w-[40em] items-center justify-center lg:mt-34">
-        <div className="rounded-[25%] border border-[#19191C0A] bg-[#F9F9FA] p-3 shadow-[0px_9.36px_9.36px_0px_hsla(0,0%,0%,0.04)]">
-          <div className="rounded-[25%] border border-[#FAFAFB] bg-white p-5 shadow-[0px_2px_12px_0px_hsla(0,0%,0%,0.03)] lg:p-9">
+    <main ref={pageRef} className={styles.pageWrap}>
+      <div className={styles.blossomLayer} aria-hidden="true">
+        {blossomItems.map((blossom) => (
+          <motion.div
+            key={blossom.id}
+            className={styles.blossomPetal}
+            style={{
+              left: `${blossom.left}%`,
+              top: `${blossom.top}vh`,
+              width: `${blossom.size}px`,
+              height: `${blossom.size}px`,
+              opacity: blossom.opacity,
+            }}
+            initial={{ y: "-14vh", opacity: 0, rotate: blossom.rotate }}
+            animate={{
+              y: ["-14vh", "118vh"],
+              x: [
+                0,
+                blossom.sway,
+                -blossom.sway * 0.55,
+                blossom.sway * 0.25,
+                0,
+              ],
+              rotate: [
+                blossom.rotate,
+                blossom.rotate + 18,
+                blossom.rotate - 14,
+                blossom.rotate + 8,
+              ],
+              opacity: [0, blossom.opacity, blossom.opacity, 0],
+            }}
+            transition={{
+              duration: blossom.duration,
+              delay: blossom.delay,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "linear",
+            }}
+          >
             <Image
-              alt={"Next.js logo"}
-              src={NextjsLogo}
-              width={56}
-              height={56}
+              src="/blossom.svg"
+              alt=""
+              fill
+              sizes="32px"
+              className={styles.blossomImage}
             />
-          </div>
-        </div>
-        <div
-          className={`flex w-38 items-center transition-opacity duration-2500 ${status === "success" ? "opacity-100" : "opacity-0"}`}
-        >
-          <div className="to-[rgba(253, 54, 110, 0.15)] h-[1px] flex-1 bg-gradient-to-l from-[#f02e65]"></div>
-          <div className="icon-check flex h-5 w-5 items-center justify-center rounded-full border border-[#FD366E52] bg-[#FD366E14] text-[#FD366E]"></div>
-          <div className="to-[rgba(253, 54, 110, 0.15)] h-[1px] flex-1 bg-gradient-to-r from-[#f02e65]"></div>
-        </div>
-        <div className="rounded-[25%] border border-[#19191C0A] bg-[#F9F9FA] p-3 shadow-[0px_9.36px_9.36px_0px_hsla(0,0%,0%,0.04)]">
-          <div className="rounded-[25%] border border-[#FAFAFB] bg-white p-5 shadow-[0px_2px_12px_0px_hsla(0,0%,0%,0.03)] lg:p-9">
-            <Image
-              alt={"Appwrite logo"}
-              src={AppwriteLogo}
-              width={56}
-              height={56}
-            />
-          </div>
-        </div>
+          </motion.div>
+        ))}
       </div>
 
-      <section className="mt-12 flex h-52 flex-col items-center">
-        {status === "loading" ? (
-          <div className="flex flex-row gap-4">
-            <div role="status">
-              <svg
-                aria-hidden="true"
-                className="h-5 w-5 animate-spin fill-[#FD366E] text-gray-200 dark:text-gray-600"
-                viewBox="0 0 100 101"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                  fill="currentColor"
-                />
-                <path
-                  d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                  fill="currentFill"
-                />
-              </svg>
-              <span className="sr-only">Loading...</span>
+      <AnimatePresence>
+        {showIntro && (
+          <motion.div
+            className={styles.introOverlay}
+            initial={{ opacity: 1 }}
+            exit={{
+              opacity: 0,
+              transition: { duration: 0.8, ease: "easeOut" },
+            }}
+            aria-hidden="true"
+          >
+            <svg
+              className={styles.introBorderSvg}
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+            >
+              <rect
+                className={styles.introBorderRect}
+                x="1"
+                y="1"
+                width="98"
+                height="98"
+                rx="1.3"
+                ry="1.3"
+                pathLength="100"
+              />
+            </svg>
+
+            {/* <motion.div
+              className={styles.introGlow}
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{
+                scale: [0.92, 1.18, 0.98],
+                opacity: [0.42, 0.95, 0.58],
+              }}
+              transition={{
+                duration: 2.4,
+                repeat: Infinity,
+                repeatType: "mirror",
+                ease: "easeInOut",
+              }}
+            /> */}
+
+            <div className={styles.introTextStack}>
+              {introLines.map((line, index) => (
+                <h2
+                  key={line.id}
+                  ref={(element) => {
+                    introLineRefs.current[index] = element;
+                  }}
+                  className={`${styles.introTitle} ${line.className}`}
+                >
+                  {line.text}
+                </h2>
+              ))}
             </div>
-            <span>Waiting for connection...</span>
-          </div>
-        ) : status === "success" ? (
-          <h1 className="font-[Poppins] text-2xl font-light text-[#2D2D31]">
-            Congratulations!
-          </h1>
-        ) : (
-          <h1 className="font-[Poppins] text-2xl font-light text-[#2D2D31]">
-            Check connection
-          </h1>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        <p className="mt-2 mb-8">
-          {status === "success" ? (
-            <span>You connected your app successfully.</span>
-          ) : status === "error" || status === "idle" ? (
-            <span>Send a ping to verify the connection</span>
-          ) : null}
-        </p>
-
-        <button
-          onClick={sendPing}
-          className={`cursor-pointer rounded-md bg-[#FD366E] px-2.5 py-1.5 ${status === "loading" ? "hidden" : "visible"}`}
-        >
-          <span className="text-white">Send a ping</span>
-        </button>
-      </section>
-
-      <div className="grid grid-rows-3 gap-7 lg:grid-cols-3 lg:grid-rows-none">
-        <div className="flex h-full w-72 flex-col gap-2 rounded-md border border-[#EDEDF0] bg-white p-4">
-          <h2 className="text-xl font-light text-[#2D2D31]">Edit your app</h2>
-          <p>
-            Edit{" "}
-            <code className="rounded-sm bg-[#EDEDF0] p-1">app/page.js</code> to
-            get started with building your app.
-          </p>
+      <section className={styles.poster}>
+        <div className={styles.topLogo}>
+          <Image
+            src="/logo_uel.png"
+            alt="UEL Logo"
+            width={120}
+            height={120}
+            className={styles.uelLogo}
+          />
         </div>
-        <a
-          href="https://cloud.appwrite.io"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div className="flex h-full w-72 flex-col gap-2 rounded-md border border-[#EDEDF0] bg-white p-4">
-            <div className="flex flex-row items-center justify-between">
-              <h2 className="text-xl font-light text-[#2D2D31]">
-                Go to console
-              </h2>
-              <span className="icon-arrow-right text-[#D8D8DB]"></span>
+        <div className={styles.hero}>
+          <div className={styles.backgroundLayer}>
+            <Image
+              src="/school.jpg"
+              alt="UEL Campus"
+              fill
+              sizes="(max-width: 900px) 100vw, 768px"
+              className={styles.schoolImage}
+              priority
+            />
+          </div>
+
+          <div className={styles.heroText}>
+            <p className={styles.invited}>You&apos;re Invited to</p>
+            <h1 className={styles.newTitle}>Graduation</h1>
+            <p className={styles.chapter}>Ceremony</p>
+
+            <div className={styles.gradLine}>
+              <span>SẮP TỐT NGHIỆP</span>
             </div>
-            <p>
-              Navigate to the console to control and oversee the Appwrite
-              services.
+
+            <h2 className={styles.name}>Đặng Phan Khánh Huyền</h2>
+            <p className={styles.faculty}>Khoa Quản Trị Kinh Doanh</p>
+            <p className={styles.school}>
+              TRƯỜNG ĐẠI HỌC KINH TẾ - LUẬT
+              <br />
+              ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH
             </p>
           </div>
-        </a>
 
-        <a
-          href="https://appwrite.io/docs"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div className="flex h-full w-72 flex-col gap-2 rounded-md border border-[#EDEDF0] bg-white p-4">
-            <div className="flex flex-row items-center justify-between">
-              <h2 className="text-xl font-light text-[#2D2D31]">
-                Explore docs
-              </h2>
-              <span className="icon-arrow-right text-[#D8D8DB]"></span>
-            </div>
-            <p>
-              Discover the full power of Appwrite by diving into our
-              documentation.
-            </p>
-          </div>
-        </a>
-      </div>
+          <Image
+            src="/avatar.png"
+            alt="Graduation portrait"
+            width={430}
+            height={780}
+            className={styles.avatar}
+            priority
+          />
+        </div>
 
-      <aside className="fixed bottom-0 flex w-full cursor-pointer border-t border-[#EDEDF0] bg-white">
-        <details open={showLogs} ref={detailsRef} className={"w-full"}>
-          <summary className="flex w-full flex-row justify-between p-4 marker:content-none">
-            <div className="flex gap-2">
-              <span className="font-semibold">Logs</span>
-              {logs.length > 0 && (
-                <div className="flex items-center rounded-md bg-[#E6E6E6] px-2">
-                  <span className="font-semibold">{logs.length}</span>
-                </div>
-              )}
-            </div>
-            <div className="icon">
-              <span className="icon-cheveron-down" aria-hidden="true"></span>
-            </div>
-          </summary>
-          <div className="flex w-full flex-col lg:flex-row">
-            <div className="flex flex-col border-r border-[#EDEDF0]">
-              <div className="border-y border-[#EDEDF0] bg-[#FAFAFB] px-4 py-2 text-[#97979B]">
-                Project
-              </div>
-              <div className="grid grid-cols-2 gap-4 p-4">
-                <div className="flex flex-col">
-                  <span className="text-[#97979B]">Endpoint</span>
-                  <span className="truncate">
-                    {process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[#97979B]">Project-ID</span>
-                  <span className="truncate">
-                    {process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}
-                  </span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[#97979B]">Project name</span>
-                  <span className="truncate">
-                    {process.env.NEXT_PUBLIC_APPWRITE_PROJECT_NAME}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex-grow">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-y border-[#EDEDF0] bg-[#FAFAFB] text-[#97979B]">
-                    {logs.length > 0 ? (
-                      <>
-                        <td className="w-52 py-2 pl-4">Date</td>
-                        <td>Status</td>
-                        <td>Method</td>
-                        <td className="hidden lg:table-cell">Path</td>
-                        <td className="hidden lg:table-cell">Response</td>
-                      </>
-                    ) : (
-                      <>
-                        <td className="py-2 pl-4">Logs</td>
-                      </>
-                    )}
-                  </tr>
-                </thead>
-                <tbody>
-                  {logs.length > 0 ? (
-                    logs.map((log, index) => (
-                      <tr key={`log-${index}-${log.date.getTime()}`}>
-                        <td className="py-2 pl-4 font-[Fira_Code]">
-                          {log.date.toLocaleString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </td>
-                        <td>
-                          {log.status > 400 ? (
-                            <div className="w-fit rounded-sm bg-[#FF453A3D] px-1 text-[#B31212]">
-                              {log.status}
-                            </div>
-                          ) : (
-                            <div className="w-fit rounded-sm bg-[#10B9813D] px-1 text-[#0A714F]">
-                              {log.status}
-                            </div>
-                          )}
-                        </td>
-                        <td>{log.method}</td>
-                        <td className="hidden lg:table-cell">{log.path}</td>
-                        <td className="hidden font-[Fira_Code] lg:table-cell">
-                          {log.response}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr key="no-logs">
-                      <td className="py-2 pl-4 font-[Fira_Code]">
-                        There are no logs to show
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+        {/* <div className={styles.paperTexture} /> */}
+
+        <div className={styles.flower}>
+          <Image
+            src="/flower.png"
+            alt="Flower decoration"
+            width={340}
+            height={240}
+            className={styles.flowerLeft}
+          />
+
+          <Image
+            src="/flower.png"
+            alt="Flower decoration"
+            width={310}
+            height={220}
+            className={styles.flowerRight}
+          />
+        </div>
+
+        <InfoCard />
+
+        <section className={styles.letterCard}>
+          <Image
+            src="/Paper-Texture.png"
+            alt=""
+            fill
+            sizes="(max-width: 900px) 95vw, 720px"
+            className={styles.paperTextureImg}
+          />
+
+          <p className={styles.dear}>Dear you,</p>
+          <p className={styles.letterBody}>
+            Cảm ơn vì đã luôn là thanh xuân của mình, hãy đến để cùng chia sẻ
+            những khoảng khắc ý nghĩa này với mình nhé ♡♡♡.
+          </p>
+          <p className={styles.sign}>Khánh Huyền</p>
+        </section>
+
+        <Image
+          src="/card.png"
+          alt="Card decoration"
+          width={460}
+          height={320}
+          className={styles.envelope}
+        />
+
+        <Image
+          src="/white-flower.png"
+          alt="White flower decoration"
+          width={220}
+          height={220}
+          className={styles.whiteFlower}
+        />
+        <Image
+          src="/charm.png"
+          alt="White flower decoration"
+          width={220}
+          height={220}
+          className={styles.charm}
+        />
+
+        {/* <div className={styles.polaroid}>
+          <Image
+            src="/5T5A1815.JPG"
+            alt="Polaroid portrait"
+            width={120}
+            height={160}
+            className={styles.polaroidPhoto}
+          />
+        </div> */}
+
+        <section className={styles.countdown}>
+          <p className={styles.countdownTitle}>
+            ĐẾM NGƯỢC ĐẾN NGÀY ĐẶC BIỆT ♥︎
+          </p>
+          <div className={styles.countGrid}>
+            <article>
+              <h4>{String(timeLeft.days).padStart(2, "0")}</h4>
+              <p>NGÀY</p>
+            </article>
+            <article>
+              <h4>{String(timeLeft.hours).padStart(2, "0")}</h4>
+              <p>GIỜ</p>
+            </article>
+            <article>
+              <h4>{String(timeLeft.minutes).padStart(2, "0")}</h4>
+              <p>PHÚT</p>
+            </article>
+            <article>
+              <h4>{String(timeLeft.seconds).padStart(2, "0")}</h4>
+              <p>GIÂY</p>
+            </article>
           </div>
-        </details>
-      </aside>
+        </section>
+      </section>
     </main>
   );
 }

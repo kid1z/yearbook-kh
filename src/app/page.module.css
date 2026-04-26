@@ -760,8 +760,14 @@
 
   .whiteFlower {
     width: 112px;
-    right: -6px;
-    bottom: 190px;
+    right: 50px;
+    bottom: 145px;
+  }
+
+  .charm {
+    width: 50px;
+    right: 30px;
+    bottom: 155px;
   }
 
   .polaroid {
