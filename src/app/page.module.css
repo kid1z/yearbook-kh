@@ -135,7 +135,7 @@
   display: flex;
   gap: 10px;
   padding: 10px 12px;
-  border-radius: 14px;
+  border-radius: 8px;
   background: rgb(22 59 110 / 59%);
   color: white;
   backdrop-filter: blur(8px);
@@ -173,7 +173,7 @@
   font-weight: 700;
   color: white;
   letter-spacing: 0.01em;
-  font-family: "Geist";
+  font-family: "Inter";
 }
 
 .messageTime {
@@ -187,7 +187,7 @@
   color: white;
   line-height: 1.45;
   word-break: break-word;
-  font-family: "Geist", serif;
+  font-family: "Inter", serif;
   font-weight: 300;
 }
 
