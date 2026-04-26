@@ -11,8 +11,8 @@ import styles from "./page.module.css";
 
 gsap.registerPlugin(useGSAP, SplitText);
 
-const INTRO_DURATION_MS = 4000;
-const REVEAL_TIMELINE_DELAY_S = 3.1;
+const INTRO_DURATION_MS = 4500;
+const REVEAL_TIMELINE_DELAY_S = 4.1;
 
 const introLines = [
   {
@@ -91,13 +91,16 @@ export default function GraduationLanding() {
   useGSAP(
     () => {
       const select = gsap.utils.selector(pageRef);
+      const poster = select(`.${styles.poster}`);
+      const schoolImage = select(`.${styles.schoolImage}`);
       const topLogo = select(`.${styles.topLogo}`);
       const heroTextChildren = select(`.${styles.heroText} > *`);
       const avatar = select(`.${styles.avatar}`);
       const infoCard = select(`.${styles.infoCard}`);
       const flowers = select(`.${styles.flowerLeft}, .${styles.flowerRight}`);
+      const introLineElements = introLineRefs.current.filter(Boolean);
 
-      const introSplits = introLineRefs.current.filter(Boolean).map((element) =>
+      const introSplits = introLineElements.map((element) =>
         SplitText.create(element, {
           type: "chars",
           charsClass: styles.introChar,
@@ -110,47 +113,50 @@ export default function GraduationLanding() {
       });
 
       introTimeline
+        .set(introLineElements, {
+          autoAlpha: 1,
+        })
         .from(introSplits[0]?.chars ?? [], {
           opacity: 0,
-          y: 28,
-          rotateX: -80,
-          filter: "blur(10px)",
-          stagger: 0.028,
+          y: 34,
+          rotateX: -82,
+          filter: "blur(12px)",
+          stagger: 0.038,
           duration: 1.05,
         })
         .from(
           introSplits[1]?.chars ?? [],
           {
             opacity: 0,
-            y: 20,
-            scale: 0.9,
-            filter: "blur(8px)",
-            stagger: 0.05,
-            duration: 0.8,
+            y: 24,
+            scale: 0.88,
+            filter: "blur(10px)",
+            stagger: 0.06,
+            duration: 1.02,
           },
-          "-=0.45",
+          "-=0.62",
         )
         .from(
           introSplits[2]?.chars ?? [],
           {
             opacity: 0,
-            y: 18,
-            filter: "blur(8px)",
-            stagger: 0.02,
-            duration: 0.92,
+            y: 22,
+            filter: "blur(10px)",
+            stagger: 0.03,
+            duration: 1.28,
           },
-          "-=0.32",
+          "-=0.5",
         )
         .to(
           introSplits.flatMap((split) => split.chars),
           {
-            y: -8,
+            y: -12,
             opacity: 0,
-            filter: "blur(9px)",
-            stagger: 0.006,
-            duration: 0.6,
+            filter: "blur(12px)",
+            stagger: 0.01,
+            duration: 0.95,
           },
-          2.95,
+          3.45,
         );
 
       const revealTimeline = gsap.timeline({
@@ -159,11 +165,35 @@ export default function GraduationLanding() {
       });
 
       revealTimeline
-        .from(topLogo, {
-          y: -42,
-          opacity: 0,
-          duration: 0.85,
+        .set(poster, {
+          autoAlpha: 1,
         })
+        .fromTo(
+          schoolImage,
+          {
+            scale: 1.14,
+            y: 28,
+            opacity: 0.38,
+            filter: "blur(7px)",
+          },
+          {
+            scale: 1,
+            y: 0,
+            opacity: 0.8,
+            filter: "blur(0px)",
+            duration: 0.5,
+            ease: "power2.out",
+          },
+        )
+        .from(
+          topLogo,
+          {
+            y: -42,
+            opacity: 0,
+            duration: 0.85,
+          },
+          "-=1.05",
+        )
         .from(
           heroTextChildren,
           {
