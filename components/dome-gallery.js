@@ -290,7 +290,7 @@ export default function DomeGallery({
       radius = clamp(radius, minRadius, maxRadius);
       lockedRadiusRef.current = Math.round(radius);
 
-      const viewerPad = Math.max(8, Math.round(minDim * padFactor));
+      const viewerPad = Math.max(6, Math.round(minDim * padFactor));
       root.style.setProperty("--radius", `${lockedRadiusRef.current}px`);
       root.style.setProperty("--viewer-pad", `${viewerPad}px`);
       root.style.setProperty("--overlay-blur-color", overlayBlurColor);

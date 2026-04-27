@@ -2,6 +2,7 @@ import "./app.css";
 import "@appwrite.io/pink-icons";
 import localFont from "next/font/local";
 import { Inter } from "next/font/google";
+import { Toaster } from "sonner";
 
 const qellia = localFont({
   src: "./fonts/Fz_Qellia_Fix.ttf",
@@ -46,6 +47,7 @@ export default function RootLayout({ children }) {
         className={`${qellia.variable} ${highSpirited.variable} ${inter.variable} bg-[#FAFAFB] font-[Inter] text-sm text-[#56565C]`}
       >
         {children}
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

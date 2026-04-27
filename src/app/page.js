@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useGSAP } from "@gsap/react";
 import SplitText from "gsap/SplitText";
 import gsap from "gsap";
+import { toast } from "sonner";
 import InfoCard from "./info-card";
 import styles from "./page.module.css";
 import Chat from "./chat";
@@ -65,6 +66,7 @@ export default function GraduationLanding() {
   const targetDate = new Date("2026-05-11T00:00:00");
   const pageRef = useRef(null);
   const introLineRefs = useRef([]);
+  const introTextStackRef = useRef(null);
 
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -83,6 +85,13 @@ export default function GraduationLanding() {
   const [formMessage, setFormMessage] = useState("");
   const [sending, setSending] = useState(false);
   const inputRef = useRef(null);
+  const [rsvpDrawerOpen, setRsvpDrawerOpen] = useState(false);
+  const [rsvpName, setRsvpName] = useState("");
+  const [rsvpPhone, setRsvpPhone] = useState("");
+  const [rsvpTime, setRsvpTime] = useState("");
+  const [rsvpSending, setRsvpSending] = useState(false);
+  const [rsvpDone, setRsvpDone] = useState(false);
+  const [rsvpDeclined, setRsvpDeclined] = useState(false);
 
   function getTimeLeft() {
     const now = new Date();
@@ -124,13 +133,12 @@ export default function GraduationLanding() {
       opacity: 0,
       duration: 0.7,
       ease: "power3.in",
-    })
-      .fromTo(
-        letter,
-        { scale: 0.5, opacity: 0, y: 40 },
-        { scale: 1, opacity: 1, y: 0, duration: 0.8 },
-        "-=0.35",
-      );
+    }).fromTo(
+      letter,
+      { scale: 0.5, opacity: 0, y: 40 },
+      { scale: 1, opacity: 1, y: 0, duration: 0.8 },
+      "-=0.35",
+    );
 
     // After letter reveal, transition to main page
     setTimeout(() => {
@@ -159,6 +167,17 @@ export default function GraduationLanding() {
   useEffect(() => {
     refreshChat();
   }, []);
+
+  useEffect(() => {
+    if (showIntro) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showIntro]);
 
   async function handleSend() {
     const trimmed = formMessage.trim();
@@ -189,6 +208,43 @@ export default function GraduationLanding() {
       console.error("Error sending message:", error);
     } finally {
       setSending(false);
+    }
+  }
+
+  async function handleRsvpSubmit() {
+    const trimmedName = rsvpName.trim();
+    const trimmedPhone = rsvpPhone.trim();
+    const trimmedTime = rsvpTime.trim();
+    if (!trimmedName || !trimmedPhone || !trimmedTime || rsvpSending) return;
+
+    setRsvpSending(true);
+    try {
+      const response = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: trimmedName,
+          phone: trimmedPhone,
+          time: trimmedTime,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to submit RSVP");
+      }
+
+      setRsvpName("");
+      setRsvpPhone("");
+      setRsvpTime("");
+      setRsvpDrawerOpen(false);
+      setRsvpDone(true);
+      toast.success("Cảm ơn bạn, thông tin đã được ghi nhận!");
+    } catch (error) {
+      console.error("Error submitting RSVP:", error);
+    } finally {
+      setRsvpSending(false);
     }
   }
 
@@ -250,24 +306,17 @@ export default function GraduationLanding() {
           },
           "-=0.5",
         )
-        .call(
-          () => {
-            // Gentle breathing float on text until card is clicked
-            gsap.to(introLineElements, {
-              y: -6,
-              duration: 2.4,
-              ease: "sine.inOut",
-              yoyo: true,
-              repeat: -1,
-              stagger: 0.1,
-            });
+        .to(
+          introTextStackRef.current,
+          {
+            y: -0.14 * introLineElements.length * 1.2 * 100,
+            scale: 0.78,
+            duration: 0.65,
+            ease: "power3.inOut",
           },
+          "+=0.2",
         )
-        .call(
-          () => setIntroPhase("card"),
-          undefined,
-          "+=1.6",
-        );
+        .call(() => setIntroPhase("card"), undefined, "+=0.15");
 
       const revealTimeline = gsap.timeline({
         defaults: { ease: "power3.out" },
@@ -420,89 +469,60 @@ export default function GraduationLanding() {
       </div>
       <AnimatePresence>
         {showIntro && (
-          <motion.div
-            className={styles.introOverlay}
-            initial={{ opacity: 1 }}
-            exit={{
-              opacity: 0,
-              transition: { duration: 0.8, ease: "easeOut" },
-            }}
-            aria-hidden="true"
-          >
-            <svg
-              className={styles.introBorderSvg}
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
+          <AnimatePresence>
+            <motion.div
+              className={styles.introOverlay}
+              initial={{ opacity: 1 }}
+              exit={{
+                opacity: 0,
+                transition: { duration: 0.8, ease: "easeOut" },
+              }}
+              aria-hidden="true"
             >
-              <rect
-                className={styles.introBorderRect}
-                x="1"
-                y="1"
-                width="98"
-                height="98"
-                rx="1.3"
-                ry="1.3"
-                pathLength="100"
-              />
-            </svg>
-
-            {/* <motion.div
-              className={styles.introGlow}
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{
-                scale: [0.92, 1.18, 0.98],
-                opacity: [0.42, 0.95, 0.58],
-              }}
-              transition={{
-                duration: 2.4,
-                repeat: Infinity,
-                repeatType: "mirror",
-                ease: "easeInOut",
-              }}
-            /> */}
-
-            <div className={styles.introTextStack}>
-              {introLines.map((line, index) => (
-                <h2
-                  key={line.id}
-                  ref={(element) => {
-                    introLineRefs.current[index] = element;
-                  }}
-                  className={`${styles.introTitle} ${line.className}`}
-                >
-                  {line.text}
-                </h2>
-              ))}
-            </div>
-
-            {/* Intro envelope card */}
-            <AnimatePresence>
-              {introPhase !== "text" && (
-                <motion.div
-                  ref={introCardRef}
-                  className={styles.introCard}
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.7, ease: [0.68, -0.55, 0.27, 1.55] }}
-                  style={{ pointerEvents: introPhase === "card" ? "auto" : "none" }}
-                  onClick={handleCardClick}
-                >
-                  <div className="intro-envelope-front">
-                    <div className={styles.introCardSeal} />
-                    <p className={styles.introCardHint}>Nhấn để mở</p>
-                  </div>
-                  <div className="intro-letter" style={{ opacity: 0 }}>
-                    <p className={styles.introLetterDear}>Dear you,</p>
-                    <p className={styles.introLetterBody}>
-                      Cảm ơn vì đã luôn là thanh xuân của mình, hãy đến để cùng
-                      chia sẻ những khoảng khắc ý nghĩa này với mình nhé ♡♡♡.
-                    </p>
-                    <p className={styles.introLetterSign}>Khánh Huyền</p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+              <div ref={introTextStackRef} className={styles.introTextStack}>
+                {introLines.map((line, index) => (
+                  <h2
+                    key={line.id}
+                    ref={(element) => {
+                      introLineRefs.current[index] = element;
+                    }}
+                    className={`${styles.introTitle} ${line.className}`}
+                  >
+                    {line.text}
+                  </h2>
+                ))}
+              </div>
+              {/* Intro envelope card */}
+              <AnimatePresence>
+                {introPhase !== "text" && (
+                  <motion.div
+                    ref={introCardRef}
+                    className={styles.introCard}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      duration: 0.6,
+                      ease: [0.68, -0.55, 0.27, 1.55],
+                    }}
+                    style={{
+                      pointerEvents: introPhase === "card" ? "auto" : "none",
+                    }}
+                    onClick={handleCardClick}
+                  >
+                    <div className="intro-envelope-front">
+                      <div className={styles.introCardSeal} />
+                      <p className={styles.introCardHint}>
+                        Nhấn để mở 1 điều đặt biệt dành cho bạn nha
+                      </p>
+                    </div>
+                    <div className="intro-letter" style={{ opacity: 0 }}>
+                      <Image src="/tenor.gif" alt="Letter content" fill />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
         )}
       </AnimatePresence>
       <AnimatePresence>
@@ -621,9 +641,9 @@ export default function GraduationLanding() {
                 "/NAM_0960.JPG",
                 "/NAM_1426.JPG",
                 "/NAM_1461.JPG",
-                "/NAM-1.JPG",
-                "/NAM-2.JPG",
-                "/NAM_0443.JPG",
+                "/NAM-1.png",
+                "/NAM-2.png",
+                // "/NAM_0443.png",
               ]}
               variant="1"
             />
@@ -691,8 +711,40 @@ export default function GraduationLanding() {
           </div>
         </section>
 
+        <section className={styles.rsvpSection}>
+          {!rsvpDone && !rsvpDeclined ? (
+            <>
+              <p className={styles.rsvpHeading}>
+                Bạn sẽ tham dự cùng mình chứ?
+              </p>
+              <div className={styles.rsvpButtons}>
+                <button
+                  className={styles.rsvpYes}
+                  onClick={() => setRsvpDrawerOpen(true)}
+                >
+                  Có, mình sẽ đến
+                </button>
+                <button
+                  className={styles.rsvpNo}
+                  onClick={() => setRsvpDeclined(true)}
+                >
+                  Tiếc quá, mình không đến được
+                </button>
+              </div>
+            </>
+          ) : rsvpDone ? (
+            <p className={styles.rsvpHeading}>
+              Cảm ơn bạn, hẹn gặp lại vào ngày 11/05/2026 nhé!
+            </p>
+          ) : (
+            <p className={styles.rsvpHeading}>
+              Cảm ơn bạn, hẹn gặp lại vào một dịp khác nhé!
+            </p>
+          )}
+        </section>
+
         {/* <PhotoGlobe visible={!showIntro} /> */}
-        <div style={{ width: "100%", height: "100vh" }}>
+        <div className={styles.domeWrap}>
           <DomeGallery
             fit={0.6}
             minRadius={300}
@@ -754,6 +806,72 @@ export default function GraduationLanding() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {rsvpDrawerOpen && (
+          <motion.div
+            className={styles.drawerBackdrop}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => setRsvpDrawerOpen(false)}
+          >
+            <motion.div
+              className={styles.drawer}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className={styles.drawerHandle} />
+              <h3 className={styles.drawerTitle}>Thông tin tham dự</h3>
+
+              <input
+                type="text"
+                className={styles.drawerInput}
+                placeholder="Họ và tên"
+                value={rsvpName}
+                onChange={(e) => setRsvpName(e.target.value)}
+                maxLength={60}
+              />
+
+              <input
+                type="tel"
+                className={styles.drawerInput}
+                placeholder="Số điện thoại"
+                value={rsvpPhone}
+                onChange={(e) => setRsvpPhone(e.target.value)}
+                maxLength={20}
+              />
+
+              <input
+                type="text"
+                className={styles.drawerInput}
+                placeholder="Thời gian tham dự (vd: 7:00 AM)"
+                value={rsvpTime}
+                onChange={(e) => setRsvpTime(e.target.value)}
+                maxLength={40}
+              />
+
+              <button
+                className={styles.drawerSend}
+                onClick={handleRsvpSubmit}
+                disabled={
+                  !rsvpName.trim() ||
+                  !rsvpPhone.trim() ||
+                  !rsvpTime.trim() ||
+                  rsvpSending
+                }
+              >
+                {rsvpSending ? "Đang gửi..." : "Gửi thông tin"}
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <p>Created with 𓆩❤︎𓆪 by hiệp đẹp trai</p>
     </main>
   );
 }

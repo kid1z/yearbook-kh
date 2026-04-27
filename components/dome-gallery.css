@@ -219,3 +219,14 @@ main.sphere-main {
 .edge-fade--bottom {
   bottom: 0;
 }
+
+@media (max-width: 900px) {
+  .item__image {
+    inset: 4px;
+    transform: translateZ(0) scale(1.16);
+  }
+
+  .edge-fade {
+    height: 60px;
+  }
+}

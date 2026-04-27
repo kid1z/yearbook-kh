@@ -5,7 +5,12 @@
       "Bash(grep -iE '\\\\.\\(jpg|jpeg|png|svg|webp|gif\\)$')",
       "WebFetch(domain:domegallery.framer.website)",
       "WebSearch",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(sed -i '' '1258s/bottom: 100px;/top: 40px;/' \"/Users/admin/Desktop/starter-for-nextjs/src/app/page.module.css\")",
+      "Bash(sed -i '' '1264s/bottom: 110px;/top: 70px;/' \"/Users/admin/Desktop/starter-for-nextjs/src/app/page.module.css\")",
+      "Bash(sed -i '' '1274s/left: 14px;/margin-top: 24px;/' \"/Users/admin/Desktop/starter-for-nextjs/src/app/page.module.css\")",
+      "Bash(sed -i '' '1275d' \"/Users/admin/Desktop/starter-for-nextjs/src/app/page.module.css\")",
+      "Bash(sed -i '' '1298s/bottom: 120px;/top: 580px;/' \"/Users/admin/Desktop/starter-for-nextjs/src/app/page.module.css\")"
     ]
   }
 }
