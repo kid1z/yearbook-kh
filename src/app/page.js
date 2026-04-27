@@ -15,8 +15,7 @@ import "../../components/photo-globe.css";
 import DomeGallery from "../../components/dome-gallery";
 gsap.registerPlugin(useGSAP, SplitText);
 
-const INTRO_DURATION_MS = 4500;
-const REVEAL_TIMELINE_DELAY_S = 4.1;
+const LETTER_REVEAL_MS = 3000;
 
 const introLines = [
   {
@@ -74,6 +73,9 @@ export default function GraduationLanding() {
     seconds: 0,
   });
   const [showIntro, setShowIntro] = useState(true);
+  const [introPhase, setIntroPhase] = useState("text"); // "text" | "card" | "opening"
+  const revealTimelineRef = useRef(null);
+  const introCardRef = useRef(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatError, setChatError] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -104,13 +106,38 @@ export default function GraduationLanding() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const hideIntroTimer = window.setTimeout(() => {
-      setShowIntro(false);
-    }, INTRO_DURATION_MS);
+  function handleCardClick() {
+    if (introPhase !== "card") return;
+    setIntroPhase("opening");
 
-    return () => window.clearTimeout(hideIntroTimer);
-  }, []);
+    const cardEl = introCardRef.current;
+    if (!cardEl) return;
+
+    // Animate card opening — scale up and reveal letter
+    const cardInner = cardEl.querySelector(".intro-envelope-front");
+    const letter = cardEl.querySelector(".intro-letter");
+
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    tl.to(cardInner, {
+      rotateX: -105,
+      opacity: 0,
+      duration: 0.7,
+      ease: "power3.in",
+    })
+      .fromTo(
+        letter,
+        { scale: 0.5, opacity: 0, y: 40 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.8 },
+        "-=0.35",
+      );
+
+    // After letter reveal, transition to main page
+    setTimeout(() => {
+      revealTimelineRef.current?.play();
+      setTimeout(() => setShowIntro(false), 500);
+    }, LETTER_REVEAL_MS);
+  }
 
   async function refreshChat() {
     try {
@@ -223,22 +250,30 @@ export default function GraduationLanding() {
           },
           "-=0.5",
         )
-        .to(
-          introSplits.flatMap((split) => split.chars),
-          {
-            y: -12,
-            opacity: 0,
-            filter: "blur(12px)",
-            stagger: 0.01,
-            duration: 0.95,
+        .call(
+          () => {
+            // Gentle breathing float on text until card is clicked
+            gsap.to(introLineElements, {
+              y: -6,
+              duration: 2.4,
+              ease: "sine.inOut",
+              yoyo: true,
+              repeat: -1,
+              stagger: 0.1,
+            });
           },
-          3.45,
+        )
+        .call(
+          () => setIntroPhase("card"),
+          undefined,
+          "+=1.6",
         );
 
       const revealTimeline = gsap.timeline({
         defaults: { ease: "power3.out" },
-        delay: REVEAL_TIMELINE_DELAY_S,
+        paused: true,
       });
+      revealTimelineRef.current = revealTimeline;
 
       revealTimeline
         .set(poster, {
@@ -439,6 +474,34 @@ export default function GraduationLanding() {
                 </h2>
               ))}
             </div>
+
+            {/* Intro envelope card */}
+            <AnimatePresence>
+              {introPhase !== "text" && (
+                <motion.div
+                  ref={introCardRef}
+                  className={styles.introCard}
+                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.7, ease: [0.68, -0.55, 0.27, 1.55] }}
+                  style={{ pointerEvents: introPhase === "card" ? "auto" : "none" }}
+                  onClick={handleCardClick}
+                >
+                  <div className="intro-envelope-front">
+                    <div className={styles.introCardSeal} />
+                    <p className={styles.introCardHint}>Nhấn để mở</p>
+                  </div>
+                  <div className="intro-letter" style={{ opacity: 0 }}>
+                    <p className={styles.introLetterDear}>Dear you,</p>
+                    <p className={styles.introLetterBody}>
+                      Cảm ơn vì đã luôn là thanh xuân của mình, hãy đến để cùng
+                      chia sẻ những khoảng khắc ý nghĩa này với mình nhé ♡♡♡.
+                    </p>
+                    <p className={styles.introLetterSign}>Khánh Huyền</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

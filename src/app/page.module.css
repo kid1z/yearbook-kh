@@ -388,6 +388,171 @@
   will-change: transform, opacity, filter;
 }
 
+/* ── Intro envelope card ── */
+
+.introCard {
+  position: relative;
+  z-index: 3;
+  width: min(72vw, 320px);
+  aspect-ratio: 4 / 5;
+  margin-top: 18px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  perspective: 800px;
+}
+
+.introCard::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 221, 143, 0.5),
+    rgba(255, 198, 99, 0.2),
+    rgba(255, 221, 143, 0.5)
+  );
+  z-index: -1;
+  animation: cardGlowPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes cardGlowPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Envelope front (closed state) */
+.introCard :global(.intro-envelope-front) {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: linear-gradient(
+    160deg,
+    #1a3052 0%,
+    #0f2440 40%,
+    #162d50 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border: 1px solid rgba(255, 221, 143, 0.25);
+  box-shadow:
+    0 20px 60px rgba(8, 18, 36, 0.6),
+    inset 0 1px 0 rgba(255, 230, 160, 0.15);
+  transform-origin: top center;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.introCardSeal {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 40%,
+    #ffd862 0%,
+    #c8963e 60%,
+    #8b6914 100%
+  );
+  box-shadow:
+    0 0 24px rgba(255, 199, 70, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.introCardHint {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-size: 15px;
+  color: rgba(255, 221, 143, 0.8);
+  letter-spacing: 0.08em;
+}
+
+/* Letter inside (hidden until opened) */
+.introCard :global(.intro-letter) {
+  position: absolute;
+  inset: 8px;
+  border-radius: 8px;
+  background: linear-gradient(
+    160deg,
+    #fdfaf2 0%,
+    #f8f0dc 50%,
+    #faf4e8 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 18px;
+  box-shadow:
+    0 8px 30px rgba(8, 18, 36, 0.4),
+    inset 0 0 0 1px rgba(255, 221, 143, 0.3);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.introLetterDear {
+  margin: 0;
+  font-family: var(--font-high-spirited), cursive;
+  font-size: 38px;
+  color: #5b77a4;
+  line-height: 0.9;
+}
+
+.introLetterBody {
+  margin: 0;
+  font-size: 14px;
+  color: #3f607f;
+  line-height: 1.55;
+  text-align: center;
+  letter-spacing: 0.01em;
+  max-width: 260px;
+}
+
+.introLetterSign {
+  margin: 0;
+  font-family: var(--font-high-spirited), cursive;
+  font-size: 34px;
+  color: #5f88bb;
+  line-height: 0.95;
+}
+
+@media (max-width: 900px) {
+  .introCard {
+    width: min(64vw, 260px);
+    margin-top: 10px;
+  }
+
+  .introCardSeal {
+    width: 40px;
+    height: 40px;
+  }
+
+  .introCardHint {
+    font-size: 13px;
+  }
+
+  .introLetterDear {
+    font-size: 30px;
+  }
+
+  .introLetterBody {
+    font-size: 12px;
+    max-width: 200px;
+  }
+
+  .introLetterSign {
+    font-size: 28px;
+  }
+}
+
 @keyframes introBorderRun {
   0% {
     stroke-dashoffset: 100;

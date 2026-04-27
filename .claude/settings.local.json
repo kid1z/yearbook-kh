@@ -4,7 +4,8 @@
       "Bash(npm run *)",
       "Bash(grep -iE '\\\\.\\(jpg|jpeg|png|svg|webp|gif\\)$')",
       "WebFetch(domain:domegallery.framer.website)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(node *)"
     ]
   }
 }
