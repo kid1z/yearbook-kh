@@ -20,7 +20,7 @@ const highSpirited = localFont({
 });
 
 export const metadata = {
-  title: "Appwrite + Next.js",
+  title: "Khanh Huyen\'s Graduation Ceremony",
   description: "Appwrite starter for Next.js",
 };
 

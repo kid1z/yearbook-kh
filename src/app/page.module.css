@@ -416,7 +416,7 @@
   width: min(100%, 1120px);
   aspect-ratio: 3 / 4;
   border-radius: 26px;
-  overflow: hidden;
+  overflow: clip;
   opacity: 0;
   visibility: hidden;
   background: #f3f5f9;
@@ -439,6 +439,7 @@
   width: 100%;
   position: relative;
   overflow: hidden;
+  border-radius: 26px 26px 0 0;
 }
 
 .backgroundLayer {
@@ -542,13 +543,14 @@
 
 .gradLine {
   margin-top: 26px;
-  width: 328px;
+  width: 400px;
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 20px;
   font-weight: 600;
   letter-spacing: 0.08em;
+  font-family: var(--font-qellia);
 }
 
 .gradLine::after {
@@ -778,7 +780,7 @@
 .envelope {
   position: absolute;
   right: -145px;
-  bottom: 100px;
+  top: -100px;
   z-index: 6;
   width: 540px;
   height: auto;
@@ -789,7 +791,7 @@
 .whiteFlower {
   position: absolute;
   right: 122px;
-  bottom: 285px;
+  top: 100px;
   z-index: 9;
   width: 192px;
   height: auto;
@@ -801,7 +803,7 @@
 .charm {
   position: absolute;
   right: 85px;
-  bottom: 315px;
+  top: 160px;
   z-index: 8;
   width: 70px;
   height: auto;
@@ -886,8 +888,8 @@
 .flowerLeft {
   position: absolute;
   left: -68px;
-  bottom: 226px;
-  z-index: 5;
+  top: 550px;
+  z-index: 2;
   width: 258px;
   height: auto;
   transform: rotate(17deg);
@@ -962,6 +964,7 @@
   .hero {
     height: auto;
     min-height: 100vh;
+    border-radius: 0;
   }
 
   .heroText {

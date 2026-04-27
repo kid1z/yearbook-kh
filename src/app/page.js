@@ -9,7 +9,10 @@ import gsap from "gsap";
 import InfoCard from "./info-card";
 import styles from "./page.module.css";
 import Chat from "./chat";
-
+import ImageTrail from "../../components/image-trail";
+import PhotoGlobe from "../../components/photo-globe";
+import "../../components/photo-globe.css";
+import DomeGallery from "../../components/dome-gallery";
 gsap.registerPlugin(useGSAP, SplitText);
 
 const INTRO_DURATION_MS = 4500;
@@ -18,7 +21,7 @@ const REVEAL_TIMELINE_DELAY_S = 4.1;
 const introLines = [
   {
     id: 1,
-    text: "Graduation Ceremony",
+    text: "Lễ Tốt Nghiệp",
     className: styles.introPrimaryLine,
   },
   { id: 2, text: "11/05/2026", className: styles.introDateLine },
@@ -380,7 +383,6 @@ export default function GraduationLanding() {
           </motion.div>
         ))}
       </div>
-
       <AnimatePresence>
         {showIntro && (
           <motion.div
@@ -440,7 +442,6 @@ export default function GraduationLanding() {
           </motion.div>
         )}
       </AnimatePresence>
-
       <AnimatePresence>
         {!showIntro && (
           <motion.nav
@@ -463,21 +464,19 @@ export default function GraduationLanding() {
               ref={inputRef}
               type="text"
               className={styles.inputField}
-              placeholder="Leave your message..."
+              placeholder="Để lại lời chúc..."
               readOnly
               onClick={() => setDrawerOpen(true)}
             />
           </motion.nav>
         )}
       </AnimatePresence>
-
       <Chat
         showIntro={showIntro}
         chatMessages={chatMessages}
         chatError={chatError}
         avatarPalette={avatarPalette}
       />
-
       <section className={styles.poster}>
         <div className={styles.hero}>
           <div className={styles.backgroundLayer}>
@@ -492,12 +491,17 @@ export default function GraduationLanding() {
           </div>
 
           <div className={styles.heroText}>
-            <p className={styles.invited}>You&apos;re Invited to</p>
-            <h1 className={styles.newTitle}>Graduation</h1>
-            <p className={styles.chapter}>Ceremony</p>
+            <p className={styles.invited}>Mời bạn tới</p>
+            <h1 className={styles.newTitle}>Lễ</h1>
+            <p className={styles.chapter}>Tốt Nghiệp</p>
 
             <div className={styles.gradLine}>
-              <span>SẮP TỐT NGHIỆP</span>
+              {/* <span>Đếm ngược: </span> */}
+              {/* <h4>{String(timeLeft.days).padStart(2, "0")}</h4> */}
+              <span>{String(timeLeft.days).padStart(2, "0")} Ngày</span>
+              <span>{String(timeLeft.hours).padStart(2, "0")} Giờ</span>
+              <span>{String(timeLeft.minutes).padStart(2, "0")} Phút</span>
+              <span>{String(timeLeft.seconds).padStart(2, "0")} Giây</span>
             </div>
 
             <h2 className={styles.name}>Đặng Phan Khánh Huyền</h2>
@@ -541,55 +545,64 @@ export default function GraduationLanding() {
 
         <InfoCard />
 
-        <section className={styles.letterCard}>
+        <div style={{ position: "relative" }}>
+          <section
+            // style={{ height: "500px", width: '100%', position: "relative", overflow: "hidden" }}
+            className={styles.letterCard}
+          >
+            <ImageTrail
+              key={`image-trail-${showIntro}`} // Reset animation when showIntro changes
+              items={[
+                "/NAM_0379.JPG",
+                "/NAM_0437.JPG",
+                "/NAM_0960.JPG",
+                "/NAM_1426.JPG",
+                "/NAM_1461.JPG",
+                "/NAM-1.JPG",
+                "/NAM-2.JPG",
+                "/NAM_0443.JPG",
+              ]}
+              variant="1"
+            />
+            <p className={styles.dear}>Dear you,</p>
+            <p className={styles.letterBody}>
+              Cảm ơn vì đã luôn là thanh xuân của mình, hãy đến để cùng chia sẻ
+              những khoảng khắc ý nghĩa này với mình nhé ♡♡♡.
+            </p>
+            <p className={styles.sign}>Khánh Huyền</p>
+
+            <Image
+              src="/Paper-Texture.png"
+              alt=""
+              fill
+              sizes="(max-width: 900px) 95vw, 720px"
+              className={styles.paperTextureImg}
+            />
+          </section>
+
           <Image
-            src="/Paper-Texture.png"
-            alt=""
-            fill
-            sizes="(max-width: 900px) 95vw, 720px"
-            className={styles.paperTextureImg}
+            src="/card.png"
+            alt="Card decoration"
+            width={460}
+            height={320}
+            className={styles.envelope}
           />
 
-          <p className={styles.dear}>Dear you,</p>
-          <p className={styles.letterBody}>
-            Cảm ơn vì đã luôn là thanh xuân của mình, hãy đến để cùng chia sẻ
-            những khoảng khắc ý nghĩa này với mình nhé ♡♡♡.
-          </p>
-          <p className={styles.sign}>Khánh Huyền</p>
-        </section>
-
-        <Image
-          src="/card.png"
-          alt="Card decoration"
-          width={460}
-          height={320}
-          className={styles.envelope}
-        />
-
-        <Image
-          src="/white-flower.png"
-          alt="White flower decoration"
-          width={220}
-          height={220}
-          className={styles.whiteFlower}
-        />
-        <Image
-          src="/charm.png"
-          alt="White flower decoration"
-          width={220}
-          height={220}
-          className={styles.charm}
-        />
-
-        {/* <div className={styles.polaroid}>
           <Image
-            src="/5T5A1815.JPG"
-            alt="Polaroid portrait"
-            width={120}
-            height={160}
-            className={styles.polaroidPhoto}
+            src="/white-flower.png"
+            alt="White flower decoration"
+            width={220}
+            height={220}
+            className={styles.whiteFlower}
           />
-        </div> */}
+          <Image
+            src="/charm.png"
+            alt="White flower decoration"
+            width={220}
+            height={220}
+            className={styles.charm}
+          />
+        </div>
 
         <section className={styles.countdown}>
           <p className={styles.countdownTitle}>
@@ -614,7 +627,20 @@ export default function GraduationLanding() {
             </article>
           </div>
         </section>
+
+        {/* <PhotoGlobe visible={!showIntro} /> */}
+        <div style={{ width: "100%", height: "100vh" }}>
+          <DomeGallery
+            fit={0.6}
+            minRadius={300}
+            maxVerticalRotationDeg={3}
+            segments={34}
+            dragDampening={2}
+            grayscale={false}
+          />
+        </div>
       </section>
+
       <AnimatePresence>
         {drawerOpen && (
           <motion.div
@@ -634,7 +660,7 @@ export default function GraduationLanding() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className={styles.drawerHandle} />
-              <h3 className={styles.drawerTitle}>Leave a message</h3>
+              <h3 className={styles.drawerTitle}>Để lại lời chúc</h3>
 
               <input
                 type="text"
