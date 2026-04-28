@@ -21,11 +21,12 @@ const highSpirited = localFont({
 });
 
 export const metadata = {
+  metadataBase: "https://khanhhuyen.app",
   title: "Khanh Huyen's Graduation Ceremony",
   description: "Trường UEL - 11/05/2026",
   openGraph: {
     title: "Khanh Huyen's Graduation Ceremony",
-    description: "Lễ Tốt Nghiệp - 11/05/2026",
+    description: "Trường UEL - 11/05/2026",
     images: [
       {
         url: "/thumbnail.jpg",
@@ -37,7 +38,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Khanh Huyen's Graduation Ceremony",
-    description: "Lễ Tốt Nghiệp - 11/05/2026",
+    description: "Trường UEL - 11/05/2026",
     images: ["/thumbnail.jpg"],
   },
 };
