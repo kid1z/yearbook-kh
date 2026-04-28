@@ -21,8 +21,25 @@ const highSpirited = localFont({
 });
 
 export const metadata = {
-  title: "Khanh Huyen\'s Graduation Ceremony",
-  description: "Appwrite starter for Next.js",
+  title: "Khanh Huyen's Graduation Ceremony",
+  description: "Trường UEL - 11/05/2026",
+  openGraph: {
+    title: "Khanh Huyen's Graduation Ceremony",
+    description: "Lễ Tốt Nghiệp - 11/05/2026",
+    images: [
+      {
+        url: "/thumbnail.jpg",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Khanh Huyen's Graduation Ceremony",
+    description: "Lễ Tốt Nghiệp - 11/05/2026",
+    images: ["/thumbnail.jpg"],
+  },
 };
 
 export default function RootLayout({ children }) {
