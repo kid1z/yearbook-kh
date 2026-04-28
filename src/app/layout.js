@@ -21,17 +21,17 @@ const highSpirited = localFont({
 });
 
 export const metadata = {
-  metadataBase: "https://khanhhuyen.app",
-  title: "Khanh Huyen's Graduation Ceremony",
-  description: "Trường UEL - 11/05/2026",
   openGraph: {
     title: "Khanh Huyen's Graduation Ceremony",
     description: "Trường UEL - 11/05/2026",
+    url: "https://khanhhuyen.app",
+    siteName: "Khanh Huyen's Graduation Ceremony",
     images: [
       {
-        url: "/thumbnail.jpg",
+        url: "https://khanhhuyen.app/thumbnail.png",
         width: 1200,
         height: 630,
+        alt: "Khanh Huyen's Graduation Ceremony Thumbnail",
       },
     ],
   },
@@ -39,8 +39,9 @@ export const metadata = {
     card: "summary_large_image",
     title: "Khanh Huyen's Graduation Ceremony",
     description: "Trường UEL - 11/05/2026",
-    images: ["/thumbnail.jpg"],
+    images: ["https://khanhhuyen.app/thumbnail.png"],
   },
+  type: "website",
 };
 
 export default function RootLayout({ children }) {
