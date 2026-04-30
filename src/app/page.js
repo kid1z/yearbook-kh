@@ -818,6 +818,24 @@ export default function GraduationLanding() {
           )}
         </section>
 
+        <section className={styles.guideSection}>
+          <p className={styles.guideHeading}>Hướng dẫn để xe và di chuyển</p>
+          <div className={styles.guideImageWrap}>
+            <Image
+              src="/maps.jpeg"
+              alt="Bản đồ hướng dẫn"
+              width={600}
+              height={400}
+              className={styles.guideImage}
+            />
+          </div>
+          <p className={styles.guideText}>
+            Mọi người đi xe máy thì đi vào{" "}
+            <strong>cổng số 3</strong> (Định vị). Mình sẽ chờ ở khu
+            vực trước <strong>Toà KTL.B1</strong>.
+          </p>
+        </section>
+
         {/* <PhotoGlobe visible={!showIntro} /> */}
         <div className={styles.domeWrap}>
           <DomeGallery
