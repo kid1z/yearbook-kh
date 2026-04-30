@@ -42,10 +42,11 @@ const blossomItems = Array.from({ length: 50 }, (_, index) => {
     top: -12 - row * 5,
     size: 10 + (index % 5) * 4,
     duration: 16 + (index % 7) * 1.3,
-    sway: 10 + (index % 6) * 3,
     delay: cycle * 0.26 + row * 0.12,
+    sway: 10 + (index % 6) * 3,
     rotate: -20 + (index % 8) * 5,
     opacity: 0.44 + (index % 5) * 0.08,
+    variant: index % 4,
   };
 });
 
@@ -440,40 +441,17 @@ export default function GraduationLanding() {
       <audio ref={audioRef} src="/audio/music.mp3" loop preload="auto" />
       <div className={styles.blossomLayer} aria-hidden="true">
         {blossomItems.map((blossom) => (
-          <motion.div
+          <div
             key={blossom.id}
-            className={styles.blossomPetal}
+            className={`${styles.blossomPetal} ${styles[`blossomVariant${blossom.variant}`]}`}
             style={{
               left: `${blossom.left}%`,
               top: `${blossom.top}vh`,
               width: `${blossom.size}px`,
               height: `${blossom.size}px`,
-              opacity: blossom.opacity,
-            }}
-            initial={{ y: "-14vh", opacity: 0, rotate: blossom.rotate }}
-            animate={{
-              y: ["-14vh", "118vh"],
-              x: [
-                0,
-                blossom.sway,
-                -blossom.sway * 0.55,
-                blossom.sway * 0.25,
-                0,
-              ],
-              rotate: [
-                blossom.rotate,
-                blossom.rotate + 18,
-                blossom.rotate - 14,
-                blossom.rotate + 8,
-              ],
-              opacity: [0, blossom.opacity, blossom.opacity, 0],
-            }}
-            transition={{
-              duration: blossom.duration,
-              delay: blossom.delay,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "linear",
+              animationDuration: `${blossom.duration}s`,
+              animationDelay: `${blossom.delay}s`,
+              "--petal-opacity": blossom.opacity,
             }}
           >
             <Image
@@ -483,7 +461,7 @@ export default function GraduationLanding() {
               sizes="32px"
               className={styles.blossomImage}
             />
-          </motion.div>
+          </div>
         ))}
       </div>
       <AnimatePresence>

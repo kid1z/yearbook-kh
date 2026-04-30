@@ -159,12 +159,12 @@
 .messageItem {
   display: flex;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   border-radius: 8px;
   background: rgba(22, 59, 110, 0.24);
   color: white;
   backdrop-filter: blur(8px);
-  pointer-events: auto;
+  pointer-events: none;
   cursor: default;
   flex-shrink: 0;
 }
@@ -559,12 +559,136 @@
   border-radius: 999px;
   overflow: hidden;
   transform-origin: center;
+  will-change: transform, opacity;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  opacity: 0;
+}
+
+.blossomVariant0 {
+  animation-name: blossomSwayA;
+}
+
+.blossomVariant1 {
+  animation-name: blossomSwayB;
+}
+
+.blossomVariant2 {
+  animation-name: blossomSwayC;
+}
+
+.blossomVariant3 {
+  animation-name: blossomSwayD;
 }
 
 .blossomImage {
   object-fit: cover;
   object-position: center;
   filter: saturate(1.18) contrast(1.05) brightness(1.06);
+}
+
+@keyframes blossomSwayA {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: var(--petal-opacity);
+  }
+  25% {
+    transform: translateY(25vh) translateX(14px) rotate(8deg);
+  }
+  50% {
+    transform: translateY(50vh) translateX(-4px) rotate(-6deg);
+  }
+  75% {
+    transform: translateY(75vh) translateX(10px) rotate(18deg);
+  }
+  95% {
+    opacity: var(--petal-opacity);
+  }
+  100% {
+    transform: translateY(calc(100vh + 12vh)) translateX(-2px) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+@keyframes blossomSwayB {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: var(--petal-opacity);
+  }
+  25% {
+    transform: translateY(25vh) translateX(-16px) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(50vh) translateX(6px) rotate(5deg);
+  }
+  75% {
+    transform: translateY(75vh) translateX(-12px) rotate(-20deg);
+  }
+  95% {
+    opacity: var(--petal-opacity);
+  }
+  100% {
+    transform: translateY(calc(100vh + 12vh)) translateX(3px) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+@keyframes blossomSwayC {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: var(--petal-opacity);
+  }
+  25% {
+    transform: translateY(25vh) translateX(20px) rotate(12deg);
+  }
+  50% {
+    transform: translateY(50vh) translateX(-10px) rotate(-15deg);
+  }
+  75% {
+    transform: translateY(75vh) translateX(14px) rotate(22deg);
+  }
+  95% {
+    opacity: var(--petal-opacity);
+  }
+  100% {
+    transform: translateY(calc(100vh + 12vh)) translateX(-5px) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+@keyframes blossomSwayD {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: var(--petal-opacity);
+  }
+  25% {
+    transform: translateY(25vh) translateX(-22px) rotate(-14deg);
+  }
+  50% {
+    transform: translateY(50vh) translateX(12px) rotate(10deg);
+  }
+  75% {
+    transform: translateY(75vh) translateX(-16px) rotate(-24deg);
+  }
+  95% {
+    opacity: var(--petal-opacity);
+  }
+  100% {
+    transform: translateY(calc(100vh + 12vh)) translateX(6px) rotate(0deg);
+    opacity: 0;
+  }
 }
 
 .poster {
