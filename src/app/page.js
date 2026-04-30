@@ -815,7 +815,7 @@ export default function GraduationLanding() {
               rel="noopener noreferrer"
               style={{ color: "#000", textDecoration: "underline" }}
             >
-              Định vị
+              Định vị ở đây nhé
             </a>
             ) Mình sẽ chờ ở khu vực trước <strong>Toà KTL.B1</strong>.
           </p>

@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import Image from "next/image";
 import { gsap } from "gsap";
+import "./photo-globe.css";
 
 const PHOTOS = [
   "/5T5A1638.JPG",
@@ -57,13 +57,16 @@ function clamp(value, min, max) {
 
 export default function PhotoGlobe({ visible }) {
   const globeRef = useRef(null);
+  const prevTransformRef = useRef("");
   const [entered, setEntered] = useState(false);
   const dragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
   const velocity = useRef({ x: 0, y: 0 });
-  const rotX = useRef(30); // stronger tilt so the sphere reads as a globe
+  const rotX = useRef(30);
   const rotY = useRef(0);
-  const animId = useRef(null);
+  const autoRotateRef = useRef(null);
+  const decayRef = useRef(null);
+  const rafPending = useRef(false);
   const spherePoints = useRef(fibonacciSphere(PHOTOS.length));
 
   function getRadius() {
@@ -88,12 +91,71 @@ export default function PhotoGlobe({ visible }) {
     return () => clearTimeout(timer);
   }, [visible, entered]);
 
+  /* ── Apply rotation to the stage element ── */
+  function applyRotation() {
+    const el = globeRef.current;
+    if (!el) return;
+    const tx = `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;
+    if (tx !== prevTransformRef.current) {
+      prevTransformRef.current = tx;
+      el.style.transform = tx;
+    }
+  }
+
+  /* ── Lightweight rAF auto-rotation (no GSAP onUpdate) ── */
+  function startAutoRotate() {
+    let lastTime = performance.now();
+    function tick(now) {
+      if (!dragging.current) {
+        const dt = Math.min(now - lastTime, 100);
+        rotY.current += dt * 0.009;
+        applyRotation();
+      }
+      lastTime = now;
+      autoRotateRef.current = requestAnimationFrame(tick);
+    }
+    autoRotateRef.current = requestAnimationFrame(tick);
+  }
+
+  function stopAutoRotate() {
+    if (autoRotateRef.current) {
+      cancelAnimationFrame(autoRotateRef.current);
+      autoRotateRef.current = null;
+    }
+  }
+
+  /* ── Inertia decay via rAF (no GSAP onUpdate) ── */
+  function startDecay() {
+    function decay() {
+      if (dragging.current) return;
+      velocity.current.x *= 0.92;
+      velocity.current.y *= 0.92;
+      if (Math.abs(velocity.current.x) < 0.08 && Math.abs(velocity.current.y) < 0.08) {
+        decayRef.current = null;
+        return;
+      }
+      rotY.current += velocity.current.x * 0.4;
+      rotX.current = clamp(rotX.current - velocity.current.y * 0.4, -72, 72);
+      applyRotation();
+      decayRef.current = requestAnimationFrame(decay);
+    }
+    decayRef.current = requestAnimationFrame(decay);
+  }
+
+  function stopDecay() {
+    if (decayRef.current) {
+      cancelAnimationFrame(decayRef.current);
+      decayRef.current = null;
+    }
+  }
+
   useEffect(() => {
     if (!entered) return;
     const el = globeRef.current;
     if (!el) return;
 
-    applyRotation(); // apply initial 15° tilt immediately
+    applyRotation();
+    startAutoRotate();
 
     const cards = el.querySelectorAll(".globe-card");
     gsap.fromTo(
@@ -108,40 +170,18 @@ export default function PhotoGlobe({ visible }) {
       },
     );
 
-    const autoRotate = gsap.to(
-      {},
-      {
-        duration: 40,
-        repeat: -1,
-        ease: "none",
-        onUpdate() {
-          if (dragging.current) return;
-          rotY.current += 0.075;
-          applyRotation();
-        },
-      },
-    );
-
     return () => {
-      autoRotate.kill();
+      stopAutoRotate();
+      stopDecay();
     };
   }, [entered]);
 
-  function applyRotation() {
-    const el = globeRef.current;
-    if (!el) return;
-    el.style.transform = `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;
-  }
-
+  /* ── Pointer handlers (rAF-throttled) ── */
   function onPointerDown(e) {
     dragging.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
     velocity.current = { x: 0, y: 0 };
-    if (animId.current) {
-      cancelAnimationFrame(animId.current);
-      animId.current = null;
-    }
-    gsap.killTweensOf(velocity.current);
+    stopDecay();
   }
 
   function onPointerMove(e) {
@@ -152,23 +192,20 @@ export default function PhotoGlobe({ visible }) {
     rotY.current += dx * 0.4;
     rotX.current = clamp(rotX.current - dy * 0.4, -72, 72);
     lastPos.current = { x: e.clientX, y: e.clientY };
-    applyRotation();
+
+    if (!rafPending.current) {
+      rafPending.current = true;
+      requestAnimationFrame(() => {
+        rafPending.current = false;
+        applyRotation();
+      });
+    }
   }
 
   function onPointerUp() {
     if (!dragging.current) return;
     dragging.current = false;
-    gsap.to(velocity.current, {
-      x: 0,
-      y: 0,
-      duration: 1.5,
-      ease: "power2.out",
-      onUpdate() {
-        rotY.current += velocity.current.x * 0.4;
-        rotX.current = clamp(rotX.current - velocity.current.y * 0.4, -72, 72);
-        applyRotation();
-      },
-    });
+    startDecay();
   }
 
   if (!visible) return null;
@@ -188,7 +225,7 @@ export default function PhotoGlobe({ visible }) {
           const pt = spherePoints.current[i];
           const yaw = Math.atan2(pt.x, pt.z) * (180 / Math.PI);
           const rawTilt = Math.asin(pt.y) * (180 / Math.PI);
-          const tilt = rawTilt * 0.45; // ±40° — visible curvature, cards stay readable
+          const tilt = rawTilt * 0.45;
           const x = pt.x * radius;
           const y = pt.y * radius;
           const z = pt.z * radius;
@@ -205,12 +242,15 @@ export default function PhotoGlobe({ visible }) {
                 transform: `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) rotateY(${yaw}deg) rotateX(${tilt}deg) scale(${scale})`,
               }}
             >
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={src}
                 alt=""
-                width={180}
-                height={135}
+                loading="lazy"
+                decoding="async"
                 className="globe-card-img"
+                width="180"
+                height="135"
               />
             </div>
           );
