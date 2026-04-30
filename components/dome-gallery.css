@@ -87,7 +87,8 @@ main.sphere-main {
   margin: auto;
   transform-origin: 50% 50%;
   backface-visibility: hidden;
-  transition: transform 300ms;
+  will-change: transform;
+  contain: layout style paint;
   transform: rotateY(
       calc(
         var(--rot-y) * (var(--offset-x) + ((var(--item-size-x) - 1) / 2)) +
@@ -111,7 +112,6 @@ main.sphere-main {
   background: transparent;
   overflow: hidden;
   backface-visibility: hidden;
-  transition: transform 300ms;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -221,6 +221,10 @@ main.sphere-main {
 }
 
 @media (max-width: 900px) {
+  .overlay--blur {
+    backdrop-filter: none;
+  }
+
   .item__image {
     inset: 4px;
     transform: translateZ(0) scale(1.16);

@@ -23,6 +23,10 @@ const DEFAULT_IMAGES = [
     src: "/NAM_0437.JPG",
     alt: "NAM_0437",
   },
+  // {
+  //   src: "/IMG_7366.PNG",
+  //   alt: "IMG_7366",
+  // },
   {
     src: "/NAM_0960.JPG",
     alt: "NAM_0960",
@@ -52,6 +56,10 @@ const DEFAULT_IMAGES = [
     alt: "school1",
   },
   {
+    src: "/IMG_7149.jpg",
+    alt: "IMG_7149",
+  },
+  {
     src: "/5T5A1527.JPG",
     alt: "5T5A1527",
   },
@@ -75,6 +83,10 @@ const DEFAULT_IMAGES = [
     src: "/5T5A1703.JPG",
     alt: "5T5A1703",
   },
+  // {
+  //   src: "/IMG_7018.jpg",
+  //   alt: "IMG_7018",
+  // },
   {
     src: "/5T5A1794.JPG",
     alt: "5T5A1794",
@@ -96,6 +108,10 @@ const DEFAULT_IMAGES = [
     alt: "5T5A1974",
   },
   {
+    src: "/IMG_6557.jpg",
+    alt: "IMG_6557",
+  },
+  {
     src: "/5T5A1995.JPG",
     alt: "5T5A1995",
   },
@@ -114,6 +130,10 @@ const DEFAULT_IMAGES = [
   {
     src: "/5T5A2156.JPG",
     alt: "5T5A2156",
+  },
+  {
+    src: "/IMG_6534.PNG",
+    alt: "IMG_6534",
   },
 ];
 
@@ -229,6 +249,7 @@ export default function DomeGallery({
   const draggingRef = useRef(false);
   const movedRef = useRef(false);
   const inertiaRAF = useRef(null);
+  const rafPending = useRef(false);
   const openingRef = useRef(false);
   const openStartedAtRef = useRef(0);
   const lastDragEndAt = useRef(0);
@@ -248,12 +269,25 @@ export default function DomeGallery({
 
   const items = useMemo(() => buildItems(images, segments), [images, segments]);
 
+  const prevTransform = useRef("");
   const applyTransform = (xDeg, yDeg) => {
     const el = sphereRef.current;
-    if (el) {
-      el.style.transform = `translateZ(calc(var(--radius) * -1)) rotateX(${xDeg}deg) rotateY(${yDeg}deg)`;
-    }
+    if (!el) return;
+    const tx = `translateZ(calc(var(--radius) * -1)) rotateX(${xDeg}deg) rotateY(${yDeg}deg)`;
+    if (tx === prevTransform.current) return;
+    prevTransform.current = tx;
+    el.style.transform = tx;
   };
+
+  const scheduleTransform = useCallback((xDeg, yDeg) => {
+    if (!rafPending.current) {
+      rafPending.current = true;
+      requestAnimationFrame(() => {
+        rafPending.current = false;
+        applyTransform(rotationRef.current.x, rotationRef.current.y);
+      });
+    }
+  }, []);
 
   const lockedRadiusRef = useRef(null);
 
@@ -438,7 +472,7 @@ export default function DomeGallery({
           rotationRef.current.y !== nextY
         ) {
           rotationRef.current = { x: nextX, y: nextY };
-          applyTransform(nextX, nextY);
+          scheduleTransform(nextX, nextY);
         }
         if (last) {
           draggingRef.current = false;
@@ -596,6 +630,7 @@ export default function DomeGallery({
       let rotY = -(parentY + globalY) % 360;
       if (rotY < -180) rotY += 360;
       const rotX = -parentRot.rotateX - rotationRef.current.x;
+      parent.style.transition = "transform 300ms";
       parent.style.setProperty("--rot-y-delta", `${rotY}deg`);
       parent.style.setProperty("--rot-x-delta", `${rotX}deg`);
       const refDiv = document.createElement("div");

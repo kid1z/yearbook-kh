@@ -125,7 +125,10 @@ export default function PhotoGlobe({ visible }) {
       if (dragging.current) return;
       velocity.current.x *= 0.92;
       velocity.current.y *= 0.92;
-      if (Math.abs(velocity.current.x) < 0.08 && Math.abs(velocity.current.y) < 0.08) {
+      if (
+        Math.abs(velocity.current.x) < 0.08 &&
+        Math.abs(velocity.current.y) < 0.08
+      ) {
         decayRef.current = null;
         return;
       }
