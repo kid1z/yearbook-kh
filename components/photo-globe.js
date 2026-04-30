@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import "./photo-globe.css";
 
@@ -57,7 +57,7 @@ function clamp(value, min, max) {
 
 export default function PhotoGlobe({ visible }) {
   const globeRef = useRef(null);
-  const prevTransformRef = useRef("");
+  const sceneRef = useRef(null);
   const [entered, setEntered] = useState(false);
   const dragging = useRef(false);
   const lastPos = useRef({ x: 0, y: 0 });
@@ -91,19 +91,14 @@ export default function PhotoGlobe({ visible }) {
     return () => clearTimeout(timer);
   }, [visible, entered]);
 
-  /* ── Apply rotation to the stage element ── */
-  function applyRotation() {
+  const applyRotation = useCallback(() => {
     const el = globeRef.current;
     if (!el) return;
-    const tx = `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;
-    if (tx !== prevTransformRef.current) {
-      prevTransformRef.current = tx;
-      el.style.transform = tx;
-    }
-  }
+    el.style.transform = `rotateX(${rotX.current}deg) rotateY(${rotY.current}deg)`;
+  }, []);
 
-  /* ── Lightweight rAF auto-rotation (no GSAP onUpdate) ── */
-  function startAutoRotate() {
+  /* ── Lightweight rAF auto-rotation ── */
+  const startAutoRotate = useCallback(() => {
     let lastTime = performance.now();
     function tick(now) {
       if (!dragging.current) {
@@ -115,17 +110,17 @@ export default function PhotoGlobe({ visible }) {
       autoRotateRef.current = requestAnimationFrame(tick);
     }
     autoRotateRef.current = requestAnimationFrame(tick);
-  }
+  }, [applyRotation]);
 
-  function stopAutoRotate() {
+  const stopAutoRotate = useCallback(() => {
     if (autoRotateRef.current) {
       cancelAnimationFrame(autoRotateRef.current);
       autoRotateRef.current = null;
     }
-  }
+  }, []);
 
-  /* ── Inertia decay via rAF (no GSAP onUpdate) ── */
-  function startDecay() {
+  /* ── Inertia decay via rAF ── */
+  const startDecay = useCallback(() => {
     function decay() {
       if (dragging.current) return;
       velocity.current.x *= 0.92;
@@ -140,14 +135,14 @@ export default function PhotoGlobe({ visible }) {
       decayRef.current = requestAnimationFrame(decay);
     }
     decayRef.current = requestAnimationFrame(decay);
-  }
+  }, [applyRotation]);
 
-  function stopDecay() {
+  const stopDecay = useCallback(() => {
     if (decayRef.current) {
       cancelAnimationFrame(decayRef.current);
       decayRef.current = null;
     }
-  }
+  }, []);
 
   useEffect(() => {
     if (!entered) return;
@@ -174,9 +169,9 @@ export default function PhotoGlobe({ visible }) {
       stopAutoRotate();
       stopDecay();
     };
-  }, [entered]);
+  }, [entered, applyRotation, startAutoRotate, stopAutoRotate, stopDecay]);
 
-  /* ── Pointer handlers (rAF-throttled) ── */
+  /* ── Pointer handlers on scene (not stage — stage is 0x0) ── */
   function onPointerDown(e) {
     dragging.current = true;
     lastPos.current = { x: e.clientX, y: e.clientY };
@@ -211,16 +206,16 @@ export default function PhotoGlobe({ visible }) {
   if (!visible) return null;
 
   return (
-    <div className="globe-scene">
-      <div
-        className="globe-stage"
-        ref={globeRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerLeave={onPointerUp}
-        onPointerCancel={onPointerUp}
-      >
+    <div
+      className="globe-scene"
+      ref={sceneRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerLeave={onPointerUp}
+      onPointerCancel={onPointerUp}
+    >
+      <div className="globe-stage" ref={globeRef}>
         {PHOTOS.map((src, i) => {
           const pt = spherePoints.current[i];
           const yaw = Math.atan2(pt.x, pt.z) * (180 / Math.PI);

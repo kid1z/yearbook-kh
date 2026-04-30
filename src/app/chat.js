@@ -63,8 +63,6 @@ export default function Chat({
                   <motion.div
                     key={`${message.$id || index}-${index < chatMessages.length ? "a" : "b"}`}
                     className={styles.messageItem}
-                    whileHover={{ scale: 1.03, y: -3 }}
-                    whileTap={{ scale: 0.97 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
                   >
                     <div className={styles.messageBody}>

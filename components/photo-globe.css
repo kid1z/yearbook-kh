@@ -10,6 +10,7 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+  contain: layout style paint;
 }
 
 .globe-scene::before {
@@ -43,6 +44,7 @@
   height: 0;
   transform-style: preserve-3d;
   will-change: transform;
+  contain: layout style;
   z-index: 1;
 }
 
@@ -78,6 +80,7 @@
   .globe-scene {
     height: 50vh;
     perspective: 560px;
+    contain: layout style paint;
   }
 
   .globe-scene::before {
@@ -99,6 +102,7 @@
   .globe-scene {
     height: 42vh;
     perspective: 460px;
+    contain: layout style paint;
   }
 
   .globe-scene::before {

@@ -11,8 +11,6 @@ import InfoCard from "./info-card";
 import styles from "./page.module.css";
 import Chat from "./chat";
 import ImageTrail from "../../components/image-trail";
-import PhotoGlobe from "../../components/photo-globe";
-import "../../components/photo-globe.css";
 import DomeGallery from "../../components/dome-gallery";
 gsap.registerPlugin(useGSAP, SplitText);
 
@@ -43,8 +41,8 @@ const blossomItems = Array.from({ length: 50 }, (_, index) => {
     size: 10 + (index % 5) * 4,
     duration: 16 + (index % 7) * 1.3,
     delay: cycle * 0.26 + row * 0.12,
-    sway: 10 + (index % 6) * 3,
-    rotate: -20 + (index % 8) * 5,
+    // sway: 10 + (index % 6) * 3,
+    // rotate: -20 + (index % 8) * 5,
     opacity: 0.44 + (index % 5) * 0.08,
     variant: index % 4,
   };
