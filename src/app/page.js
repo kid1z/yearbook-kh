@@ -92,6 +92,8 @@ export default function GraduationLanding() {
   const [rsvpSending, setRsvpSending] = useState(false);
   const [rsvpDone, setRsvpDone] = useState(false);
   const [rsvpDeclined, setRsvpDeclined] = useState(false);
+  const audioRef = useRef(null);
+  const [muted, setMuted] = useState(false);
 
   function getTimeLeft() {
     const now = new Date();
@@ -166,6 +168,21 @@ export default function GraduationLanding() {
 
   useEffect(() => {
     refreshChat();
+  }, []);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const playAudio = () => {
+      audio.volume = 0.5;
+      audio.play().catch(() => {});
+      document.removeEventListener("click", playAudio);
+      document.removeEventListener("touchstart", playAudio);
+    };
+    audio.play().catch(() => {
+      document.addEventListener("click", playAudio, { once: true });
+      document.addEventListener("touchstart", playAudio, { once: true });
+    });
   }, []);
 
   useEffect(() => {
@@ -419,6 +436,8 @@ export default function GraduationLanding() {
 
   return (
     <main ref={pageRef} className={styles.pageWrap}>
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio ref={audioRef} src="/audio/music.mp3" loop preload="auto" />
       <div className={styles.blossomLayer} aria-hidden="true">
         {blossomItems.map((blossom) => (
           <motion.div
@@ -512,7 +531,7 @@ export default function GraduationLanding() {
                     <div className="intro-envelope-front">
                       <div className={styles.introCardSeal} />
                       <p className={styles.introCardHint}>
-                        Nhấn để mở 1 điều đặt biệt dành cho bạn nha
+                        Nhấn để mở 1 điều đặc biệt dành cho bạn nha
                       </p>
                     </div>
                     <div className="intro-letter" style={{ opacity: 0 }}>
@@ -552,6 +571,62 @@ export default function GraduationLanding() {
               onClick={() => setDrawerOpen(true)}
             />
           </motion.nav>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {!showIntro && (
+          <motion.button
+            className={styles.muteButton}
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.6 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            onClick={() => {
+              const audio = audioRef.current;
+              if (!audio) return;
+              if (muted) {
+                audio.muted = false;
+                audio.play().catch(() => {});
+                setMuted(false);
+              } else {
+                audio.muted = true;
+                setMuted(true);
+              }
+            }}
+            aria-label={muted ? "Unmute music" : "Mute music"}
+          >
+            {muted ? (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                <line x1="23" y1="9" x2="17" y2="15" />
+                <line x1="17" y1="9" x2="23" y2="15" />
+              </svg>
+            ) : (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+            )}
+          </motion.button>
         )}
       </AnimatePresence>
       <Chat

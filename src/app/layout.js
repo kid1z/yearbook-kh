@@ -20,6 +20,12 @@ const highSpirited = localFont({
   display: "swap",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export const metadata = {
   openGraph: {
     title: "Khanh Huyen's Graduation Ceremony",

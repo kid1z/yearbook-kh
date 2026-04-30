@@ -94,6 +94,29 @@
   box-shadow: 0 4px 12px rgba(255, 198, 99, 0.2);
 }
 
+.muteButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 221, 143, 0.25);
+  background: rgba(22, 44, 78, 0.72);
+  backdrop-filter: blur(8px);
+  color: #ffd862;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.muteButton:hover {
+  background: rgba(22, 44, 78, 0.9);
+}
+
 .messageFeed {
   position: fixed;
   bottom: 32px;
