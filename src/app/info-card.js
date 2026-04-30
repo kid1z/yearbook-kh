@@ -18,7 +18,7 @@ export default function InfoCard() {
           <span className={styles.iconMark}>⌖</span>
           <p className={styles.cardLabel}>ĐỊA ĐIỂM</p>
         </div>
-        <h3>HỘI TRƯỜNG A.116</h3>
+        <h3>HỘI TRƯỜNG KTL.B1</h3>
         <p className={styles.subLine}>TRƯỜNG ĐẠI HỌC KINH TẾ - LUẬT</p>
         <p className={styles.dateLine}>ĐHQG TP. HỒ CHÍ MINH</p>
         <p className={styles.addressLine}>

@@ -830,9 +830,16 @@ export default function GraduationLanding() {
             />
           </div>
           <p className={styles.guideText}>
-            Mọi người đi xe máy thì đi vào{" "}
-            <strong>cổng số 3</strong> (Định vị). Mình sẽ chờ ở khu
-            vực trước <strong>Toà KTL.B1</strong>.
+            Mọi người đi xe máy thì đi vào <strong>cổng số 3</strong> (
+            <a
+              href="https://maps.app.goo.gl/WVfmeUP3Tq2D9u4f6"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#000", textDecoration: "underline" }}
+            >
+              Định vị
+            </a>
+            ) Mình sẽ chờ ở khu vực trước <strong>Toà KTL.B1</strong>.
           </p>
         </section>
 
