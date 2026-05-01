@@ -436,7 +436,12 @@ export default function GraduationLanding() {
   return (
     <main ref={pageRef} className={styles.pageWrap}>
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-      <audio ref={audioRef} src="/audio/music.mp3" loop preload="auto" />
+      <audio
+        ref={audioRef}
+        src="https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/music.mp3"
+        loop
+        preload="auto"
+      />
       <div className={styles.blossomLayer} aria-hidden="true">
         {blossomItems.map((blossom) => (
           <div
