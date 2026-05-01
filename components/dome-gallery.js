@@ -4,55 +4,55 @@ import "./dome-gallery.css";
 
 const DEFAULT_IMAGES = [
   {
-    src: "/5T5A1638.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1638.JPG",
     alt: "5T5A1638",
   },
   {
-    src: "/5T5A1789.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1789.JPG",
     alt: "5T5A1789",
   },
   {
-    src: "/5T5A1815.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1815.JPG",
     alt: "5T5A1815",
   },
   {
-    src: "/NAM_0379.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_0379.JPG",
     alt: "NAM_0379",
   },
   {
-    src: "/NAM_0437.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_0437.JPG",
     alt: "NAM_0437",
   },
   // {
-  //   src: "/IMG_7366.PNG",
+  //   src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/IMG_7366.PNG",
   //   alt: "IMG_7366",
   // },
   {
-    src: "/NAM_0960.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_0960.JPG",
     alt: "NAM_0960",
   },
   {
-    src: "/NAM_1426.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_1426.JPG",
     alt: "NAM_1426",
   },
   {
-    src: "/NAM_1461.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_1461.JPG",
     alt: "NAM_1461",
   },
   {
-    src: "/NAM-1.png",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM-1.png",
     alt: "NAM-1",
   },
   {
-    src: "/NAM-2.png",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM-2.png",
     alt: "NAM-2",
   },
   {
-    src: "/school.jpg",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/school.jpg",
     alt: "school",
   },
   {
-    src: "/school1.jpg",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/school1.jpg",
     alt: "school1",
   },
   {
