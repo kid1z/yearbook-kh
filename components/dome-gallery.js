@@ -56,83 +56,83 @@ const DEFAULT_IMAGES = [
     alt: "school1",
   },
   {
-    src: "/IMG_7149.jpg",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/IMG_7149.jpg",
     alt: "IMG_7149",
   },
   {
-    src: "/5T5A1527.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1527.JPG",
     alt: "5T5A1527",
   },
   {
-    src: "/5T5A1530.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1530.JPG",
     alt: "5T5A1530",
   },
   {
-    src: "/5T5A1574.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1574.JPG",
     alt: "5T5A1574",
   },
   {
-    src: "/5T5A1616.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1616.JPG",
     alt: "5T5A1616",
   },
   {
-    src: "/5T5A1636.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1636.JPG",
     alt: "5T5A1636",
   },
   {
-    src: "/5T5A1703.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1703.JPG",
     alt: "5T5A1703",
   },
   // {
-  //   src: "/IMG_7018.jpg",
+  //   src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/IMG_7018.jpg",
   //   alt: "IMG_7018",
   // },
   {
-    src: "/5T5A1794.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1794.JPG",
     alt: "5T5A1794",
   },
   {
-    src: "/5T5A1813.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1813.JPG",
     alt: "5T5A1813",
   },
   {
-    src: "/5T5A1840.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1840.JPG",
     alt: "5T5A1840",
   },
   {
-    src: "/5T5A1901.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1901.JPG",
     alt: "5T5A1901",
   },
   {
-    src: "/5T5A1974.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1974.JPG",
     alt: "5T5A1974",
   },
   {
-    src: "/IMG_6557.jpg",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/IMG_6557.jpg ",
     alt: "IMG_6557",
   },
   {
-    src: "/5T5A1995.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A1995.JPG",
     alt: "5T5A1995",
   },
   {
-    src: "/5T5A2089.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A2089.JPG",
     alt: "5T5A2089",
   },
   {
-    src: "/5T5A2130.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A2130.JPG",
     alt: "5T5A2130",
   },
   {
-    src: "/5T5A2137.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A2137.JPG",
     alt: "5T5A2137",
   },
   {
-    src: "/5T5A2156.JPG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/5T5A2156.JPG",
     alt: "5T5A2156",
   },
   {
-    src: "/IMG_6534.PNG",
+    src: "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/IMG_6534.PNG",
     alt: "IMG_6534",
   },
 ];
@@ -811,7 +811,13 @@ export default function DomeGallery({
                   onClick={onTileClick}
                   onPointerUp={onTilePointerUp}
                 >
-                  <img src={it.src} draggable={false} alt={it.alt} />
+                  <img
+                    src={it.src}
+                    draggable={false}
+                    alt={it.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
               </div>
             ))}

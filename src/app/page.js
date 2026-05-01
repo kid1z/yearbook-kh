@@ -453,7 +453,7 @@ export default function GraduationLanding() {
             }}
           >
             <Image
-              src="/blossom.svg"
+              src="https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/blossom.svg"
               alt=""
               fill
               sizes="32px"
@@ -511,7 +511,12 @@ export default function GraduationLanding() {
                       </p>
                     </div>
                     <div className="intro-letter" style={{ opacity: 0 }}>
-                      <Image src="/tenor.gif" alt="Letter content" fill />
+                      <Image
+                        src="https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/tenor.gif"
+                        alt="Letter content"
+                        fill
+                        unoptimized
+                      />
                     </div>
                   </motion.div>
                 )}
@@ -530,7 +535,7 @@ export default function GraduationLanding() {
           >
             <div className={styles.topLogo}>
               <Image
-                src="/logo_uel.png"
+                src="https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/logo_uel.png"
                 alt="UEL Logo"
                 width={120}
                 height={120}
@@ -615,7 +620,7 @@ export default function GraduationLanding() {
         <div className={styles.hero}>
           <div className={styles.backgroundLayer}>
             <Image
-              src="/school.jpg"
+              src="https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/school.jpg"
               alt="UEL Campus"
               fill
               sizes="(max-width: 900px) 100vw, 768px"
@@ -687,14 +692,14 @@ export default function GraduationLanding() {
             <ImageTrail
               key={`image-trail-${showIntro}`} // Reset animation when showIntro changes
               items={[
-                "/NAM_0379.JPG",
-                "/NAM_0437.JPG",
-                "/NAM_0960.JPG",
-                "/NAM_1426.JPG",
-                "/NAM_1461.JPG",
-                "/NAM-1.png",
-                "/NAM-2.png",
-                // "/NAM_0443.png",
+                "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_0379.JPG",
+                "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_0437.JPG",
+                "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_0960.JPG",
+                "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_1426.JPG",
+                "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_1461.JPG",
+                "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM-1.png",
+                "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM-2.png",
+                // "https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/NAM_0443.png",
               ]}
               variant="1"
             />
@@ -798,7 +803,7 @@ export default function GraduationLanding() {
           <p className={styles.guideHeading}>Hướng dẫn để xe và di chuyển</p>
           <div className={styles.guideImageWrap}>
             <Image
-              src="/maps.jpeg"
+              src="https://wplhkaqvcwbjgzwixtzr.supabase.co/storage/v1/object/public/test/maps.jpeg"
               alt="Bản đồ hướng dẫn"
               width={600}
               height={400}
