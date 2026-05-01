@@ -62,7 +62,7 @@ const avatarPalette = [
 ];
 
 export default function GraduationLanding() {
-  const targetDate = new Date("2026-05-11T00:00:00");
+  const targetDate = new Date("2026-05-11T10:00:00");
   const pageRef = useRef(null);
   const introLineRefs = useRef([]);
   const introTextStackRef = useRef(null);

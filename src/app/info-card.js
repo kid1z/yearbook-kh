@@ -8,7 +8,7 @@ export default function InfoCard() {
           <span className={styles.iconMark}>◌</span>
           <p className={styles.cardLabel}>THỜI GIAN</p>
         </div>
-        <h3>09:00 AM</h3>
+        <h3>10:00 AM</h3>
         <p className={styles.subLine}>THỨ Hai</p>
         <p className={styles.dateLine}>11 . 05 . 2026</p>
       </article>
